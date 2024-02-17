@@ -1,0 +1,667 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import 'vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css';
+@import 'primevue/resources/themes/saga-blue/theme.css';
+@import 'primevue/resources/primevue.css';
+@import 'vue-select/dist/vue-select.css';
+@import 'vue-good-table/dist/vue-good-table.css';
+@import 'vue-plyr/dist/vue-plyr.css';
+@import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
+@import 'swiper/swiper-bundle.css';
+@import 'sweetalert2/dist/sweetalert2.min.css';
+
+
+/* QwikTest - App Styles */
+
+/************ TABLE OF CONTENTS ***************
+1. General Styles
+2. NProgress Styles
+3. PrimeVue Component Styles
+4. Vue Good Table Styles
+5. CKEditor Styles
+6. VueSelect Styles
+7. Vue DateTime Styles
+8. Question Option Styles
+9. Question Input Styles
+**********************************************/
+
+:root {
+    --custom-font: "Roboto";
+    --primary-color: #05887d;
+    --secondary-color: #8d4aa5;
+}
+
+.font-sans {
+    font-family: var(--custom-font), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.bg-primary {
+    background-color: var(--primary-color);
+}
+
+.text-primary {
+    color: var(--primary-color);
+}
+
+.bg-secondary {
+    background-color: var(--secondary-color);
+}
+
+.text-secondary {
+    color: var(--secondary-color);
+}
+
+.border-primary {
+    --tw-border-opacity: 1;
+    border-color: var(--primary-color);
+}
+
+.page-heading {
+    @apply py-4 text-lg font-semibold leading-tight text-gray-800 truncate;
+}
+
+.app-heading {
+    @apply text-xl font-semibold text-gray-900;
+}
+
+.action-item {
+    @apply w-full text-gray-700 block px-4 py-2 text-sm text-left hover:bg-gray-50;
+}
+
+.auth-wrap {
+    background-position: center right;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s;
+    padding: 200px 30px 120px 30px;
+    position: relative;
+}
+.auth-background-overlay {
+    background-color: transparent;
+    background-image: linear-gradient(
+        290deg
+        , var(--primary-color) 50%, var(--primary-color) 100%);
+    opacity: 0.92;
+    transition: background 0.3s, border-radius 0.3s, opacity 0.3s;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+}
+
+.dot-pattern-bg {
+    background-color: #ffffff;
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.07' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+[dir='rtl'] .rtl\:flip {
+    transform: rotateY(180deg);
+}
+
+[dir='rtl'] .prose blockquote{
+    border-right-width: 0.25rem;
+    border-left-width: 0;
+}
+[dir='rtl'] .prose ul > li,
+[dir='rtl'] .prose ol > li{
+    padding-right: 1.75em;
+    padding-left: 0;
+}
+[dir='rtl'] .prose ol > li:before{
+    right:0.25em ;
+    left: auto;
+}
+[dir='rtl'] .prose ol > li:before,
+[dir='rtl'] .prose ul > li:before{
+    right:0.25em ;
+    left: auto;
+}
+
+[dir='rtl'] .prose thead td:first-child,
+[dir='rtl'] .prose thead th:first-child{
+    padding-right: 0;
+}
+
+[dir='rtl'] .prose thead td:last-child,
+[dir='rtl'] .prose thead th:last-child{
+    padding-left: 0;
+}
+
+.card {
+    @apply rounded bg-white shadow-md;
+}
+
+.card-body {
+    @apply p-4 lg:p-6;
+}
+
+.qt-btn {
+    @apply font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150;
+}
+
+.qt-btn-lg {
+    @apply font-bold uppercase text-base px-8 py-3 rounded shadow-md hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150;
+}
+
+.qt-btn-sm {
+    @apply font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none ease-linear transition-all duration-150;
+}
+
+.qt-btn-outline-sm {
+    @apply font-bold uppercase text-xs px-4 py-2 rounded border border-primary hover:bg-primary hover:text-white outline-none focus:outline-none ease-linear transition-all duration-150;
+}
+
+.qt-btn-primary {
+    @apply  hover:opacity-90 text-white;
+    background-color: var(--primary-color);
+}
+
+.qt-btn-success {
+    @apply bg-green-500 hover:bg-green-600 text-white;
+}
+
+.qt-btn-danger {
+    @apply bg-red-500 hover:bg-red-600 text-white;
+}
+
+.qt-link-success {
+    @apply transition duration-150 ease-in-out cursor-pointer text-green-500 hover:text-green-700 hover:underline;
+}
+
+.q-data p, .q-data div {
+    @apply mb-4;
+}
+
+.q-data .math-tex {
+    @apply text-base;
+    direction: ltr;
+}
+
+.question table, .q-data table {
+    @apply table-fixed border-collapse border border-gray-400 mb-4;
+}
+
+.question th, .q-data th {
+    @apply border border-gray-400 text-center p-1 bg-gray-50 align-top;
+}
+
+.question td, .q-data td {
+    @apply border border-gray-400 py-1 px-2 align-top;
+}
+
+.badge {
+    @apply text-sm px-3 py-1 rounded-sm;
+}
+
+.badge-sm {
+    @apply text-xs px-3 py-1 rounded-sm;
+}
+
+.badge-success {
+    @apply bg-green-200 text-green-800;
+}
+
+.badge-danger {
+    @apply bg-red-200 text-red-800;
+}
+
+.question p, .question div, .question span  {
+    @apply leading-relaxed;
+}
+
+.custom-control-label {
+    @apply text-sm;
+}
+
+.quiz-type-card {
+    background-color: transparent;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpolygon fill-rule='evenodd' points='8 4 12 6 8 8 6 12 4 8 0 6 4 4 6 0 8 4'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* NProgress Styles */
+
+#nprogress .spinner-icon {
+    width: 12px;
+    height: 12px;
+    border-top-color: #fff !important;
+    border-left-color: #fff !important;
+}
+
+/* PrimeVue Component Styles */
+
+#admin-header .p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link .p-menuitem-text {
+    @apply text-gray-800 sm:text-blue-50;
+}
+
+#admin-header .p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link .p-menuitem-icon {
+    @apply text-gray-800 sm:text-blue-50;
+}
+
+#admin-header .p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link .p-submenu-icon {
+    @apply text-gray-800 sm:text-blue-50;
+}
+
+#admin-header .p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link:not(.p-disabled):hover {
+    background: #3d4858;
+}
+
+#admin-header .p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link:focus {
+    box-shadow: none;
+}
+
+#admin-header .p-menubar .p-menubar-root-list > .p-menuitem.p-menuitem-active > .p-menuitem-link {
+    background: #3d4858;
+}
+
+.p-component {
+    @apply font-sans text-sm;
+}
+
+.p-menubar {
+    @apply border-none bg-transparent;
+    padding: 0.5rem 0;
+}
+
+.p-sidebar-close {
+    top: 12px !important;
+    right: 12px !important;
+}
+
+.p-tag {
+    @apply text-xs;
+}
+
+.p-message {
+    @apply mb-0 mt-8 text-sm;
+}
+
+.p-message .p-message-text {
+    @apply text-sm;
+}
+
+.p-skeleton {
+    @apply bg-blue-50;
+}
+
+.p-tooltip {
+    @apply z-50;
+}
+
+.p-tooltip-text {
+    @apply text-sm;
+}
+
+.tiny-input .p-inputnumber-input {
+    height: 30px;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    width: 55px;
+}
+
+.section-form .p-inputnumber-input {
+    @apply w-24;
+}
+
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+    background: var(--primary-color);
+}
+
+.p-inputswitch.p-inputswitch-checked:not(.p-disabled):hover .p-inputswitch-slider {
+    background: var(--primary-color);
+}
+
+.p-selectbutton .p-button {
+    display: inline;
+}
+
+.p-selectbutton .p-button.p-highlight {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.p-button {
+    background: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.p-button:enabled:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+[dir='rtl'] .p-message .p-message-icon {
+    margin-right: 0 !important;
+    margin-left: 0.5rem;
+}
+
+/* VueGoodTable Styles */
+
+.vgt-responsive {
+    overflow-x: visible;
+}
+
+table.vgt-table {
+    @apply border-none bg-transparent text-base;
+}
+
+.vgt-table thead {
+    @apply bg-white;
+}
+
+.vgt-table.bordered th {
+    @apply border-none bg-transparent uppercase;
+    background: none;
+}
+
+.vgt-table.bordered thead tr:nth-child(2) th {
+    @apply border-none bg-gray-100;
+    padding: 10px;
+}
+
+.vgt-table.bordered tbody tr {
+    @apply border-b border-t border-gray-100 bg-white;
+    -webkit-transition: all .3s ease;
+    transition: all .3s ease;
+}
+
+.vgt-table.bordered tbody tr:hover {
+    @apply bg-gray-50;
+}
+
+.vgt-table.bordered td {
+    @apply border-none text-base;
+    padding: 5px 15px;
+    vertical-align: middle;
+}
+
+.vgt-wrap__footer .footer__navigation__page-info__current-entry {
+    @apply border-none text-white bg-gray-400 rounded-sm outline-none;
+    line-height: 1.25rem;
+    width: 50px;
+    height: 30px;
+}
+
+.vgt-wrap__footer .footer__navigation__page-info__current-entry [type='text'] {
+    @apply p-0 rounded-sm;
+}
+
+.vgt-wrap__footer .footer__row-count__select {
+    @apply text-white bg-gray-400 rounded-sm border-gray-400;
+    background-image: none;
+}
+
+.vgt-wrap__footer .footer__row-count__select:focus {
+    @apply border-gray-300 outline-none;
+}
+
+.vgt-global-search {
+    @apply border-none bg-transparent;
+}
+
+.vgt-wrap__footer {
+    @apply border-none bg-white px-4 pt-4 pb-0 text-sm;
+    background: none;
+}
+
+.vgt-wrap__footer .footer__row-count__label {
+    @apply uppercase;
+}
+
+.vgt-wrap__footer .footer__navigation__page-info span {
+    @apply uppercase;
+}
+.vgt-wrap__footer .footer__navigation__page-btn span {
+    @apply uppercase;
+}
+
+/* CKEditor Styles */
+
+.cke_bottom {
+    border-top: none !important;
+    background: #fff !important;
+}
+
+.cke_path {
+    display: none !important;
+}
+
+.cke_resizer {
+    border-color: transparent #ebebeb transparent transparent !important;
+}
+
+/* VueSelect Styles */
+
+.vs__dropdown-toggle {
+    padding: 7px 4px;
+}
+
+.vs__dropdown-option {
+    @apply text-sm;
+}
+
+.vs__search, .vs__search:focus, .vs__selected {
+    @apply m-0 text-sm;
+}
+
+/* Vue DateTime Styles */
+
+.vdatetime-input {
+    @apply w-full bg-white text-sm;
+    color: #495057;
+    padding: 0.5rem 0.5rem;
+    border: 1px solid #ced4da !important;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 3px;
+}
+
+/* Question Option Styles */
+
+span.katex {
+    display: inline-block;
+    text-align: initial;
+    direction: ltr !important;
+}
+
+.katex-display>.katex {
+    white-space: pre-wrap;
+}
+
+.q-radio .q-options .q-option {
+    @apply relative bg-white block my-2 mx-0 overflow-hidden rounded;
+}
+.q-radio .q-options .q-option input {
+    @apply absolute cursor-pointer hidden;
+    width: 32px;
+    height: 32px;
+    order: 1;
+    z-index: 2;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.q-radio .q-options .q-option span.o-id {
+    @apply absolute inline-block bg-gray-100 rounded-full text-center text-sm;
+    top: 10px;
+    width: 32px;
+    height: 32px;
+    padding: 5px;
+    line-height: 21px;
+}
+
+[dir='ltr'] .q-radio .q-options .q-option span.o-id {
+    left: 25px;
+    margin-right: 10px;
+}
+
+[dir='rtl'] .q-radio .q-options .q-option span.o-id {
+    right: 25px;
+    margin-left: 10px;
+}
+
+.q-radio .q-options .q-option span.squared {
+    @apply rounded text-sm;
+}
+
+.q-radio .q-options .q-option span.match {
+    @apply rounded text-sm w-12;
+}
+
+.q-radio .q-options .q-option span.o-bars {
+    @apply absolute;
+    top: 15px;
+}
+
+[dir='ltr'] .q-radio .q-options .q-option span.o-bars {
+    right: 25px;
+}
+
+[dir='rtl'] .q-radio .q-options .q-option span.o-bars {
+    left: 25px;
+}
+
+.q-radio .q-options .q-option label {
+    @apply block overflow-hidden rounded w-full ltr:text-left rtl:text-right relative mb-0;
+    border: 1px solid #f3f4f6;
+    color: #3c454c;
+    z-index: 2;
+    transition: color 200ms ease-in;
+}
+
+[dir='ltr'] .q-radio .q-options .q-option label {
+    padding: 10px 70px 10px 30px;
+}
+
+[dir='rtl'] .q-radio .q-options .q-option label {
+    padding: 10px 30px 10px 70px;
+}
+
+.q-radio .q-options .q-option label span.o-text {
+    @apply block;
+    margin-top: 5px;
+    min-height: 30px;
+}
+
+[dir='ltr'] .q-radio .q-options .q-option label span.o-text {
+    margin-left: 50px;
+}
+
+[dir='rtl'] .q-radio .q-options .q-option label span.o-text {
+    margin-right: 50px;
+}
+
+.q-radio .q-options .q-option label span.o-text p {
+    @apply m-0;
+}
+.q-radio .q-options .q-option input:checked ~ label {
+    @apply border border-qt-option;
+}
+.q-radio .q-options .q-option input:checked ~ label span.o-id {
+    @apply text-white bg-qt-option;
+}
+.q-radio .q-options .q-option label.answered {
+    @apply border border-qt-option;
+}
+.q-radio .q-options .q-option label.answered span.o-id {
+    @apply text-white bg-qt-option;
+}
+.q-radio .q-options .q-option label.correct {
+    @apply border border-green-400 !important;
+}
+.q-radio .q-options .q-option label.correct span.o-id {
+    @apply text-white bg-green-400 !important;
+}
+.q-radio .q-options .q-option label.correct:after {
+    @apply absolute ltr:right-0 rtl:left-0 top-0 cursor-pointer text-white text-xs text-center;
+    content: "Correct";
+    z-index: 2;
+    transition: all 200ms ease-in;
+    padding: 0 30px 3px 40px;
+    background: rgba(52, 211, 153, 1) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 20 20' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-check'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E") no-repeat 20px 0px;
+    width: 120px;
+}
+
+.q-radio .q-options .q-option label.wrong {
+    @apply border border-red-400 !important;
+}
+.q-radio .q-options .q-option label.wrong span.o-id {
+    @apply bg-red-400 text-white !important;
+}
+.q-radio .q-options .q-option label.wrong:after {
+    @apply absolute ltr:right-0 rtl:left-0 top-0 cursor-pointer text-white text-xs text-center;
+    content: "Wrong";
+    z-index: 2;
+    transition: all 200ms ease-in;
+    padding: 0 30px 3px 40px;
+    background: rgba(248, 113, 113, 1) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 20 20' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-x'%3E%3Cline x1='18' y1='6' x2='6' y2='18'%3E%3C/line%3E%3Cline x1='6' y1='6' x2='18' y2='18'%3E%3C/line%3E%3C/svg%3E") no-repeat 25px 2px;
+    width: 120px;
+}
+
+/* Question Input Styles */
+
+.q-inputs .q-input {
+    @apply relative w-full;
+}
+
+.q-inputs .correct:after {
+    @apply absolute ltr:right-0 rtl:left-0 top-0 cursor-pointer text-white text-xs text-center ltr:rounded-tr rtl:rounded-tl;
+    content: "Correct";
+    z-index: 2;
+    transition: all 200ms ease-in;
+    padding: 0 30px 3px 40px;
+    background: rgba(52, 211, 153, 1) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 20 20' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-check'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E") no-repeat 20px 0;
+    width: 120px;
+}
+
+.q-inputs .wrong:after {
+    @apply absolute ltr:right-0 rtl:left-0 cursor-pointer text-white text-xs text-center ltr:rounded-tr rtl:rounded-tl;
+    content: "Wrong";
+    z-index: 2;
+    transition: all 200ms ease-in;
+    padding: 0 30px 3px 40px;
+    background: rgba(248, 113, 113, 1) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 20 20' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-x'%3E%3Cline x1='18' y1='6' x2='6' y2='18'%3E%3C/line%3E%3Cline x1='6' y1='6' x2='18' y2='18'%3E%3C/line%3E%3C/svg%3E") no-repeat 25px 2px;
+    width: 120px;
+}
+
+.q-inputs .q-input .i-id {
+    @apply absolute flex items-center px-4 ltr:border-r rtl:border-l h-full cursor-pointer;
+}
+
+.q-inputs .q-input .i-id label {
+    @apply rounded-full text-gray-600 bg-gray-100 h-7 w-7 leading-relaxed font-semibold text-center;
+}
+
+.q-inputs .answered .i-id label {
+    @apply text-white bg-qt-option !important;
+}
+
+.q-inputs .correct .i-id label {
+    @apply text-white bg-green-400 !important;
+}
+
+.q-inputs .wrong .i-id label {
+    @apply text-white bg-red-400 !important;
+}
+
+.q-inputs .q-input input {
+    @apply w-full text-gray-600 focus:outline-none bg-white font-normal h-12 flex items-center ltr:pl-20 rtl:pr-20 border-gray-300 rounded border;
+}
+
+.q-inputs .answered input {
+    @apply border border-qt-option !important;
+}
+
+.q-inputs .correct input {
+    @apply border border-green-400 !important;
+}
+
+.q-inputs .wrong input {
+    @apply border border-red-400 !important;
+}
+
+

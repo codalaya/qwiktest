@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="24" viewBox="0 0 40 24">
+  <g id="bank" transform="translate(-3633 -1740)">
+    <rect id="Rectangle_7" data-name="Rectangle 7" width="40" height="24" transform="translate(3633 1740)" fill="#fff"/>
+    <g id="XMLID_2_" transform="translate(3646.001 1744.999)">
+      <path id="XMLID_4_" d="M.645,5.593H1.29v4.3H2.58v-4.3H4.731v4.3h1.29v-4.3H8.172v4.3h1.29v-4.3h2.151v4.3H12.9v-4.3h.645a.645.645,0,0,0,.358-1.182L7.454.11a.645.645,0,0,0-.716,0L.287,4.411A.645.645,0,0,0,.645,5.593Z" transform="translate(0 0)" fill="#248571"/>
+      <path id="XMLID_5_" d="M13.55,260H.646a.645.645,0,0,0-.645.645v1.72a.645.645,0,0,0,.645.645h12.9a.645.645,0,0,0,.645-.645v-1.72A.645.645,0,0,0,13.55,260Z" transform="translate(-0.002 -248.817)" fill="#248571"/>
+    </g>
+  </g>
+</svg>
