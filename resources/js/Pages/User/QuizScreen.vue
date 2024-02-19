@@ -93,13 +93,6 @@
 
         <!-- Statistics -->
         <template #stats>
-            <div class="w-full h-auto">
-                <div class="py-3 ps-0 text-xl">Current Rank: <span class="font-semibold text-red-500">{{ current_ranking
-                }}</span></div>
-                <div class="py-3 ps-0 text-xl">Current Score: <span class="font-semibold text-green-500">{{ current_score
-                }}</span></div>
-            </div>
-
             <div class="w-full h-56 grid grid-cols-2 bg-white py-4">
                 <div class="flex items-center gap-2">
                     <question-chip :sno="answered" :status="'success'"></question-chip>
@@ -224,7 +217,8 @@
                             </button>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button @click="nextQuestion" class="focus:outline-none">
+                            <button @click="nextQuestion" class="focus:outline-none"
+                                :disabled="(notVisitedQuestions === 0)">
                                 <next-button :name="nextBtnText"></next-button>
                             </button>
                         </div>
@@ -316,6 +310,7 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import Tooltip from "primevue/tooltip";
 import QuestionChip from "@/Components/Buttons/QuestionChip";
+import { mapMutations } from 'vuex';
 export default {
     components: {
         SAQInteractiveOptions,
@@ -369,8 +364,6 @@ export default {
             },
             displayConfirmation: false,
             answered_count: 0,
-            current_ranking: 0,
-            current_score: 0,
         }
     },
     methods: {
@@ -409,7 +402,13 @@ export default {
                     _this.answered = data.answered;
                     _this.submitting = false;
                     _this.current_ranking = data.current_ranking;
-                    _this.current_score = parseInt(data.current_score);
+                    _this.SET_CURRENT_RANK(data.current_ranking)
+                    _this.SET_CURRENT_SCORE(data.current_score);
+                    _this.$toast.add({
+                        severity: 'info',
+                        summary: `+ ${data.current_score} Points gained.`,
+                        life: 3000
+                    })
                 })
                 .catch(function (error) {
                     _this.submitting = false;
@@ -543,7 +542,8 @@ export default {
         },
         setRemainingTimeForCurrentQuestion({ totalSeconds }) {
             this.current_question_time_remained = totalSeconds;
-        }
+        },
+        ...mapMutations('quiz', ['SET_CURRENT_RANK', 'SET_CURRENT_SCORE'])
     },
     metaInfo() {
         return {
@@ -591,8 +591,11 @@ export default {
             );
         },
         perQuestionRemainingTime() {
-            return (this.questions.length > 0) ?
-                this.questions[this.current_question].default_time : 1000000;
+            return (this.questions.length > 0 && this.current_question < this.questions.length) ?
+                this.questions[this.current_question].default_time : this.remainingTime;
+        },
+        shouldNextBtnDisable() {
+            return this.notVisitedQuestions === 0;
         }
     },
 

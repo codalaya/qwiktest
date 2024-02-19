@@ -215,22 +215,24 @@ class QuizController extends Controller
                 }
             }
         }
-
         /*Insert or Update Session Question*/
         DB::table('quiz_session_questions')->upsert(
             [
                 'question_id' => $question->id,
                 'original_question' => formatQuestionProperty($question->question, $question->questionType->code),
                 'quiz_session_id' => $session->id,
+                'quiz_id' => $session->quiz_id,
+                'user_id' => auth()->user()->id,
                 'user_answer' => serialize($request->user_answer),
                 'time_taken' => $request->time_taken,
                 'is_correct' => $isCorrect,
                 'status' => $request->status,
                 'marks_earned' => $marksEarned,
-                'marks_deducted' => $marksDeducted
+                'marks_deducted' => $marksDeducted,
+                'created_at' => now(),
             ],
             ['question_id', 'quiz_session_id'],
-            ['user_answer', 'time_taken', 'is_correct', 'status', 'marks_earned', 'marks_deducted']
+            ['user_answer', 'time_taken', 'is_correct', 'status', 'marks_earned', 'marks_deducted', 'user_id', 'quiz_id']
         );
 
         /*Update Session */
@@ -238,13 +240,12 @@ class QuizController extends Controller
         $session->total_time_taken = $request->total_time_taken;
         $session->update();
 
-        ['rank' => $rank, 'score' => $score] = resolve(CalculateCurrentRankingService::class)
-            ->calculate(auth()->user()->id, $session->code, $quiz->id);
+        $service = resolve(CalculateCurrentRankingService::class);
 
         return response()->json([
             'answered' => $session->questions()->wherePivotIn('status', ['answered', 'answered_mark_for_review'])->count(),
-            'current_ranking' => $rank,
-            'current_score' => $session->results->score ?? 0,
+            'current_ranking' => $service->calculateRank(auth()->id(), $session),
+            'current_score' => $service->calculateScore(auth()->id(), $session),
         ], 200);
     }
 
@@ -281,10 +282,12 @@ class QuizController extends Controller
     public function thankYou(Quiz $quiz, $session)
     {
         $session = QuizSession::where('code', $session)->firstOrFail();
+        $userId = auth()->id();
 
         return Inertia::render('User/QuizThanksScreen', [
             'quiz' => $quiz->only('code', 'title', 'slug', 'total_marks'),
             'session' => $session,
+            'rank' => resolve(CalculateCurrentRankingService::class)->calculateRank($userId, $session),
         ]);
     }
 

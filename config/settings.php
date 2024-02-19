@@ -14,6 +14,7 @@ return [
         \App\Settings\ThemeSettings::class,
         \App\Settings\TopBarSettings::class,
         \App\Settings\StatSettings::class,
+        \App\Settings\QuizPrizeSettings::class,
     ],
 
     /*

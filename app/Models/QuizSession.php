@@ -68,7 +68,8 @@ class QuizSession extends Model
     public function questions()
     {
         return $this->belongsToMany(Question::class, 'quiz_session_questions')
-            ->withPivot('status', 'original_question', 'options', 'is_correct', 'time_taken', 'user_answer', 'correct_answer', 'marks_earned', 'marks_deducted');
+            ->withPivot('status', 'original_question', 'options', 'is_correct', 'time_taken', 'user_answer', 'correct_answer', 'marks_earned', 'marks_deducted', 'user_id', 'quiz_id')
+            ->withTimestamps();
     }
 
     public function quizSchedule()

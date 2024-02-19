@@ -5,14 +5,18 @@ namespace App\Console\Commands;
 use App\Models\ExamSession;
 use App\Models\Question;
 use App\Models\Quiz;
+use App\Models\QuizSchedule;
 use App\Models\QuizSession;
 use App\Models\User;
 use App\Services\CalculateCurrentRankingService;
+use App\Settings\LocalizationSettings;
+use App\Settings\QuizPrizeSettings;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
+use Spatie\LaravelSettings\Models\SettingsProperty;
 
 class TestCommand extends Command
 {
@@ -43,18 +47,29 @@ class TestCommand extends Command
 
     public function handle()
     {
-        dd(User::all()->pluck('email'));
-        // $co = collect(['rame', 'esh', 'kum', 'ar']);
-        // // dd($co->search(fn ($item) => $item === 'ar'));
+        $users = [1, 0];
+        $users = User::whereIn('id', $users)->get();
+        dd($users->count());
+    }
 
-        $latestSessionId = QuizSession::latest()->first();
-        dd($latestSessionId->results->score);
-        // $quizId = Quiz::latest()->first()->id;
-        // $userId = User::firstWhere('email', 'ritik@gmail.com')->id;
+    public function getS()
+    {
+        return resolve(QuizPrizeSettings::class);
+    }
 
-        // $ranking = resolve(CalculateCurrentRankingService::class)->calculate($userId, $latestSessionId, $quizId);
-        // dd($ranking);
+    public function getRank()
+    {
+        $sessionId = QuizSession::latest()->first()->id;
+        $user = User::firstWhere('email', 'ritik@gmail.com');
+        $quizId = 1;
+        $value = DB::table('quiz_session_questions')
+            ->where('quiz_id', $quizId)
+            ->groupBy('user_id')
+            ->selectRaw('sum(marks_earned) as total_marks, user_id')
+            ->orderBy('total_marks')
+            ->get();
 
+        dd($value);
     }
 
     protected function getCheckout()

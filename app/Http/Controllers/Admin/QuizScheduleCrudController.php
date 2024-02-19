@@ -37,7 +37,7 @@ class QuizScheduleCrudController extends Controller
     {
         $quiz = Quiz::findOrFail($id);
 
-        if(!$quiz->is_active) {
+        if (!$quiz->is_active) {
             return redirect()->back()->with('errorMessage', 'Quiz is in draft mode. Kindly publish quiz before scheduling it to users');
         }
 
@@ -45,12 +45,14 @@ class QuizScheduleCrudController extends Controller
             'quiz' => $quiz->only(['id', 'title']),
             'steps' => $this->repository->getSteps($quiz->id, 'schedules'),
             'editFlag' => true,
-            'quizSchedules' => function () use($filters, $quiz) {
-                return fractal(QuizSchedule::filter($filters)
-                    ->with('quiz:id,title')
-                    ->where('quiz_id', $quiz->id)
-                    ->paginate(request()->perPage != null ? request()->perPage : 10),
-                    new QuizScheduleTransformer())->toArray();
+            'quizSchedules' => function () use ($filters, $quiz) {
+                return fractal(
+                    QuizSchedule::filter($filters)
+                        ->with('quiz:id,title')
+                        ->where('quiz_id', $quiz->id)
+                        ->paginate(request()->perPage != null ? request()->perPage : 10),
+                    new QuizScheduleTransformer()
+                )->toArray();
             },
             'userGroups' => UserGroup::select(['id', 'name'])->active()->get()
         ]);
@@ -67,8 +69,8 @@ class QuizScheduleCrudController extends Controller
         $quiz = Quiz::findOrFail($request->quiz_id);
         $schedule = new QuizSchedule();
 
-        if($request->schedule_type == 'fixed') {
-            $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $request->start_date.' '.$request->start_time);
+        if ($request->schedule_type == 'fixed') {
+            $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $request->start_date . ' ' . $request->start_time);
             $schedule->start_date = $startDate->toDateString();
             $schedule->start_time = $startDate->toTimeString();
 
@@ -79,12 +81,12 @@ class QuizScheduleCrudController extends Controller
             $schedule->grace_period = $request->grace_period;
         }
 
-        if($request->schedule_type == 'flexible') {
-            $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $request->start_date.' '.$request->start_time);
+        if ($request->schedule_type == 'flexible') {
+            $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $request->start_date . ' ' . $request->start_time);
             $schedule->start_date = $startDate->toDateString();
             $schedule->start_time = $startDate->toTimeString();
 
-            $endDate = Carbon::createFromFormat('Y-m-d H:i:s', $request->end_date.' '.$request->end_time);
+            $endDate = Carbon::createFromFormat('Y-m-d H:i:s', $request->end_date . ' ' . $request->end_time);
             $schedule->end_date = $endDate->toDateString();
             $schedule->end_time = $endDate->toTimeString();
         }
@@ -94,7 +96,7 @@ class QuizScheduleCrudController extends Controller
         $schedule->status = $request->status;
         $schedule->save();
 
-        if($schedule) {
+        if ($schedule) {
             $schedule->userGroups()->sync($request->user_groups);
         }
 
@@ -145,12 +147,12 @@ class QuizScheduleCrudController extends Controller
     {
         $schedule = QuizSchedule::with('quiz:id,total_duration')->find($id);
 
-        if($schedule->status == 'expired') {
+        if ($schedule->status == 'expired') {
             return redirect()->back()->with('errorMessage', 'You can\'t update once quiz schedule starts or expired. Please create a new schedule.');
         }
 
-        if($schedule->schedule_type == 'fixed') {
-            $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $request->start_date.' '.$request->start_time);
+        if ($schedule->schedule_type == 'fixed') {
+            $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $request->start_date . ' ' . $request->start_time);
             $schedule->start_date = $startDate->toDateString();
             $schedule->start_time = $startDate->toTimeString();
 
@@ -161,12 +163,12 @@ class QuizScheduleCrudController extends Controller
             $schedule->grace_period = $request->grace_period;
         }
 
-        if($schedule->schedule_type == 'flexible') {
-            $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $request->start_date.' '.$request->start_time);
+        if ($schedule->schedule_type == 'flexible') {
+            $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $request->start_date . ' ' . $request->start_time);
             $schedule->start_date = $startDate->toDateString();
             $schedule->start_time = $startDate->toTimeString();
 
-            $endDate = Carbon::createFromFormat('Y-m-d H:i:s', $request->end_date.' '.$request->end_time);
+            $endDate = Carbon::createFromFormat('Y-m-d H:i:s', $request->end_date . ' ' . $request->end_time);
             $schedule->end_date = $endDate->toDateString();
             $schedule->end_time = $endDate->toTimeString();
         }
@@ -174,7 +176,7 @@ class QuizScheduleCrudController extends Controller
         $schedule->status = $request->status;
         $schedule->update();
 
-        if($schedule) {
+        if ($schedule) {
             $schedule->userGroups()->sync($request->user_groups);
         }
 
@@ -183,7 +185,7 @@ class QuizScheduleCrudController extends Controller
 
     /**
      * Delete a quiz schedule
-     * 
+     *
      * @param $id
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -193,8 +195,7 @@ class QuizScheduleCrudController extends Controller
             $quizSchedule = QuizSchedule::find($id);
             $quizSchedule->userGroups()->detach();
             $quizSchedule->secureDelete('sessions');
-        }
-        catch (\Illuminate\Database\QueryException $e){
+        } catch (\Illuminate\Database\QueryException $e) {
             return redirect()->back()->with('errorMessage', 'Unable to Delete Quiz Schedule . Remove all associations and Try again!');
         }
         return redirect()->back()->with('successMessage', 'Quiz Schedule was successfully deleted!');

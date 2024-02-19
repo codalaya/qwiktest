@@ -3,30 +3,60 @@
 namespace App\Services;
 
 use App\Models\QuizSession;
+use App\Models\User;
+use App\Settings\QuizPrizeSettings;
+use Illuminate\Support\Facades\DB;
 
 class CalculateCurrentRankingService
 {
-    public function calculate($userId, $sessionId, $quizId)
+    public function calculateRank($userId, QuizSession $session)
     {
-        $session = QuizSession::where('code', $sessionId)->firstOrFail();
+        return DB::table('quiz_session_questions')
+            ->where('quiz_id', $session->quiz_id)
+            ->groupBy('user_id')
+            ->selectRaw('sum(marks_earned) as total_marks, user_id')
+            ->orderBy('total_marks')
+            ->get()->search(fn ($item) => $item->user_id === $userId) + 1;
+    }
 
-        $key = $session->quiz_schedule_id ? 'quiz_schedule_id' : 'quiz_id';
-        $value = $session->quiz_schedule_id ? $session->quiz_schedule_id : $quizId;
+    public function calculateScore($userId, QuizSession $session)
+    {
+        return DB::table('quiz_session_questions')
+            ->where('quiz_session_id', $session->id)
+            ->sum('marks_earned');
+    }
 
-        $leaderboard =  QuizSession::select('user_id', 'quiz_id')
-            ->with('user:id,first_name,last_name')
-            ->selectRaw("max(CAST(JSON_EXTRACT(`results`, \"$.score\") AS DECIMAL(10,6))) as high_score")
-            ->selectRaw("max(CAST(JSON_EXTRACT(`results`, \"$.percentage\") AS DECIMAL(10,6))) as high_percentage")
-            ->where($key, $value)
-            ->groupBy('user_id', 'quiz_id')
-            ->orderBy('high_score', 'desc')
+    public function giveReward(QuizSession $session)
+    {
+        $leaderboard = DB::table('quiz_session_questions')
+            ->where('quiz_id', $session->quiz_id)
+            ->groupBy('user_id')
+            ->selectRaw('sum(marks_earned) as total_marks, user_id')
+            ->orderBy('total_marks')
+            ->take(10)
             ->get();
-        $rank = $leaderboard->search(fn ($item) => $item->user_id === $userId) + 1;
-        $currentScore = $leaderboard->first(fn ($item) => $item->user_id === $userId)->high_score;
 
-        return [
-            'rank' => $rank,
-            'score' => $currentScore
-        ];
+        $users = User::whereIn('id', $leaderboard->pluck('user_id'))->get();
+
+        $prizeSettins = resolve(QuizPrizeSettings::class);
+
+        if ($users->count() > 0) {
+            $user = $users->first(fn ($item) => $item->id === $leaderboard[0]->user_id);
+            $user->deposit($prizeSettins->rankOne);
+        }
+
+        if ($users->count() > 1) {
+            $user = $users->first(fn ($item) => $item->id === $leaderboard[1]->user_id);
+            $user->deposit($prizeSettins->rankTwo);
+        }
+        if ($users->count() > 2) {
+            $user = $users->first(fn ($item) => $item->id === $leaderboard[2]->user_id);
+            $user->deposit($prizeSettins->rankThree);
+        }
+
+        for ($i = 3; $i < $users->count(); $i++) {
+            $user = $users->first(fn ($item) => $item->id === $leaderboard[$i]->user_id);
+            $users[$i]->deposit($prizeSettins->above10Rank);
+        }
     }
 }

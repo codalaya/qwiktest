@@ -44,7 +44,7 @@ class Question extends Model
     protected static function booted()
     {
         static::creating(function ($category) {
-            $category->attributes['code'] = 'que_'.Str::random(11);
+            $category->attributes['code'] = 'que_' . Str::random(11);
         });
     }
 
@@ -103,7 +103,8 @@ class Question extends Model
     public function quizSessions()
     {
         return $this->belongsToMany(QuizSession::class, 'quiz_session_questions')
-            ->withPivot('status', 'original_question', 'options', 'is_correct', 'time_taken', 'user_answer', 'correct_answer', 'marks_earned', 'marks_deducted');
+            ->withPivot('status', 'original_question', 'options', 'is_correct', 'time_taken', 'user_answer', 'correct_answer', 'marks_earned', 'marks_deducted', 'user_id', 'quiz_id')
+            ->withTimestamps();
     }
 
     public function tags()
@@ -148,5 +149,4 @@ class Question extends Model
     {
         $this->attributes['correct_answer'] = serialize($value);
     }
-
 }

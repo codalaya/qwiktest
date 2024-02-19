@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\Admin\QuizPriceCrudController;
 use App\Http\Controllers\Admin\UserGroupCrudController;
 use App\Http\Controllers\Admin\UserCrudController;
 use App\Http\Controllers\Admin\PracticeSetCrudController;
@@ -134,6 +135,8 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('admin')->group(function
     | Quiz Routes
     |--------------------------------------------------------------------------
     */
+    Route::get('/quizzes/prizes', [QuizPriceCrudController::class, 'showForm'])->name('quizzes.prize-settings');
+    Route::post('/quizzes/prizes', [QuizPriceCrudController::class, 'updateForm'])->name('quizzes.update_quiz_rewards');
     Route::resource('quizzes', QuizCrudController::class);
     Route::resource('quizzes/{quiz}/schedules', QuizScheduleCrudController::class, ['as' => 'quizzes']);
 
@@ -280,5 +283,3 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('admin')->group(function
     Route::get('file-manager/ckeditor', [FileController::class, 'ckeditor'])->name('file-ckeditor');
     Route::get('file-manager/fm-button', [FileController::class, 'button'])->name('file-button');
 });
-
-

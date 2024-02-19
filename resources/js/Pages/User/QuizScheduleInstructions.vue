@@ -329,5 +329,8 @@ export default {
             return null;
         }
     },
+    mounted() {
+        console.log('this.props.schedule', this.schedule)
+    }
 }
 </script>

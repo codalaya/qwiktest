@@ -9,7 +9,7 @@
             <div class="col-span-6 sm:col-span-4">
                 <p class="font-mono px-2 py-1 inline-block bg-blue-100 text-gray-600 rounded text-sm">
                     {{ __('hide_field_message') }}
-                <p/>
+                </p>
             </div>
             <!-- Enable Bank -->
             <div class="col-span-6 sm:col-span-4">
@@ -83,55 +83,55 @@
     </arc-form-section>
 </template>
 <script>
-    import AdminLayout from '@/Layouts/AdminLayout'
-    import ArcActionMessage from "@/Components/ActionMessage";
-    import ArcButton from "@/Components/Button";
-    import ArcFormSection from "@/Components/FormSection";
-    import ArcInput from "@/Components/Input";
-    import ArcInputError from "@/Components/InputError";
-    import ArcLabel from "@/Components/Label";
-    import ArcSecondaryButton from "@/Components/SecondaryButton";
-    import ArcTextArea from "@/Components/TextArea";
-    import InputSwitch from "primevue/inputswitch";
+import AdminLayout from '@/Layouts/AdminLayout'
+import ArcActionMessage from "@/Components/ActionMessage";
+import ArcButton from "@/Components/Button";
+import ArcFormSection from "@/Components/FormSection";
+import ArcInput from "@/Components/Input";
+import ArcInputError from "@/Components/InputError";
+import ArcLabel from "@/Components/Label";
+import ArcSecondaryButton from "@/Components/SecondaryButton";
+import ArcTextArea from "@/Components/TextArea";
+import InputSwitch from "primevue/inputswitch";
 
-    export default {
-        components: {
-            AdminLayout,
-            ArcActionMessage,
-            ArcButton,
-            ArcFormSection,
-            ArcTextArea,
-            ArcInput,
-            ArcInputError,
-            ArcLabel,
-            ArcSecondaryButton,
-            InputSwitch
+export default {
+    components: {
+        AdminLayout,
+        ArcActionMessage,
+        ArcButton,
+        ArcFormSection,
+        ArcTextArea,
+        ArcInput,
+        ArcInputError,
+        ArcLabel,
+        ArcSecondaryButton,
+        InputSwitch
+    },
+    props: {
+        settings: Object,
+        paymentSettings: Object
+    },
+    data() {
+        return {
+            form: this.$inertia.form({
+                enable_bank: this.paymentSettings.enable_bank,
+                bank_name: this.settings.bank_name,
+                account_owner: this.settings.account_owner,
+                account_number: this.settings.account_number,
+                iban: this.settings.iban,
+                routing_number: this.settings.routing_number,
+                bic_swift: this.settings.bic_swift,
+                other_details: this.settings.other_details,
+            }),
+        }
+    },
+    methods: {
+        updateSettings() {
+            this.form.post(route('update_bank_settings'), {
+                errorBag: 'updateBankSettings',
+                preserveScroll: true
+            });
         },
-        props: {
-            settings: Object,
-            paymentSettings: Object
-        },
-        data() {
-            return {
-                form: this.$inertia.form({
-                    enable_bank: this.paymentSettings.enable_bank,
-                    bank_name: this.settings.bank_name,
-                    account_owner: this.settings.account_owner,
-                    account_number: this.settings.account_number,
-                    iban: this.settings.iban,
-                    routing_number: this.settings.routing_number,
-                    bic_swift: this.settings.bic_swift,
-                    other_details: this.settings.other_details,
-                }),
-            }
-        },
-        methods: {
-            updateSettings() {
-                this.form.post(route('update_bank_settings'), {
-                    errorBag: 'updateBankSettings',
-                    preserveScroll: true
-                });
-            },
-        },
-    }
+    },
+}
 </script>
