@@ -44,7 +44,7 @@ class Plan extends Model
     protected static function booted()
     {
         static::creating(function ($subCategory) {
-            $subCategory->attributes['code'] = 'plan_'.Str::random(11);
+            $subCategory->attributes['code'] = 'plan_' . Str::random(11);
         });
     }
 
@@ -98,7 +98,8 @@ class Plan extends Model
 
     public function getFullNameAttribute()
     {
-        return "{$this->category->name} {$this->name} - {$this->duration} Months Plan";
+        $plural = Str::plural('Time', $this->duration);
+        return "{$this->category->name} {$this->name} - {$this->duration} {$plural} Game Play";
     }
 
     public function getFormattedPriceAttribute()

@@ -44,18 +44,18 @@ class HandleInertiaRequests extends Middleware
         $agent = new Agent();
         $settings = app(SiteSettings::class);
         return array_merge(parent::share($request), [
-            'general' => config('qwiktest.version') == "1.4.0" ? $settings->toArray() : [],
+            'general' =>  $settings->toArray(),
             'canLogin' => \Route::has('login'),
             'canResetPassword' => \Route::has('password.request'),
             'isDemo' => config('qwiktest.demo_mode'),
-            "appUrl" => config("app.url").'/',
-            "assetUrl" => config("app.url").'/storage/',
+            "appUrl" => config("app.url") . '/',
+            "assetUrl" => config("app.url") . '/storage/',
             'successMessage' => session()->get('successMessage') ? session()->get('successMessage') : null,
             'errorMessage' => session()->get('errorMessage') ? session()->get('errorMessage') : null,
             'csrf_token' => csrf_token(),
             'isMobile' => $agent->isMobile() || $agent->isTablet(),
             "currentCategory" => Cookie::has('category_id') ? ['id' => Cookie::get('category_id'), 'name' => Cookie::get('category_name')] : null,
-            'rtl' => config('qwiktest.version') == "1.4.0" ? app(LocalizationSettings::class)->default_direction == 'rtl' : false,
+            'rtl' =>  app(LocalizationSettings::class)->default_direction == 'rtl',
             'locale' => function () {
                 return app()->getLocale();
             },

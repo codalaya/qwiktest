@@ -30,10 +30,12 @@ class SubscriptionCrudController extends Controller
     public function index(SubscriptionFilters $filters)
     {
         return Inertia::render('Admin/Subscriptions', [
-            'subscriptions' => function () use($filters) {
-                return fractal(Subscription::with(['plan', 'user', 'payment:id,payment_id'])->filter($filters)
-                    ->paginate(request()->perPage != null ? request()->perPage : 10),
-                    new SubscriptionTransformer())->toArray();
+            'subscriptions' => function () use ($filters) {
+                return fractal(
+                    Subscription::with(['plan', 'user', 'payment:id,payment_id'])->filter($filters)
+                        ->paginate(request()->perPage != null ? request()->perPage : 10),
+                    new SubscriptionTransformer()
+                )->toArray();
             },
             'plans' => Plan::select(['id as value', 'name as text'])->active()->get(),
             'subscriptionStatuses' => [
@@ -61,9 +63,10 @@ class SubscriptionCrudController extends Controller
             ->where('category_id', '=', $plan->category_id)
             ->where('ends_at', '>', now()->toDateTimeString())
             ->where('status', '=', 'active')
+            ->where('duration', '>', 0)
             ->count();
 
-        if($activeSubscriptions > 0) {
+        if ($activeSubscriptions > 0) {
             return redirect()->back()->with('errorMessage', 'User has active subscription to the current plan.');
         }
 
@@ -74,7 +77,8 @@ class SubscriptionCrudController extends Controller
             $subscription->category_type = $plan->category_type;
             $subscription->category_id = $plan->category_id;
             $subscription->starts_at = Carbon::now()->toDateTimeString();
-            $subscription->ends_at = Carbon::now()->addMonths($plan->duration)->toDateTimeString();
+            $subscription->ends_at = Carbon::now()->addYears(10)->toDateTimeString();
+            $subscription->remained_game_play = $plan->duration;
             $subscription->status = $request->status;
             $subscription->save();
             return redirect()->back()->with('successMessage', 'Subscription was successfully added!');
@@ -121,7 +125,7 @@ class SubscriptionCrudController extends Controller
      */
     public function update(UpdateSubscriptionRequest $request, $id)
     {
-        if(config('qwiktest.demo_mode')) {
+        if (config('qwiktest.demo_mode')) {
             return redirect()->back()->with('errorMessage', 'Demo Mode! Subscriptions can\'t be changed.');
         }
 
@@ -139,20 +143,19 @@ class SubscriptionCrudController extends Controller
      */
     public function destroy($id)
     {
-        if(config('qwiktest.demo_mode')) {
+        if (config('qwiktest.demo_mode')) {
             return redirect()->back()->with('errorMessage', 'Demo Mode! Subscriptions can\'t be deleted.');
         }
 
         try {
             $subscription = Subscription::find($id);
 
-            if($subscription->isActive()) {
+            if ($subscription->isActive()) {
                 return redirect()->back()->with('errorMessage', 'Unable to Delete Subscription! Subscription is active.');
             }
 
             $subscription->secureDelete();
-        }
-        catch (\Illuminate\Database\QueryException $e){
+        } catch (\Illuminate\Database\QueryException $e) {
             return redirect()->back()->with('errorMessage', 'Unable to Delete Subscription . Remove all associations and Try again!');
         }
         return redirect()->back()->with('successMessage', 'Subscription was successfully deleted!');

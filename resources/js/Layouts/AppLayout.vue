@@ -142,9 +142,13 @@
                                         {{ __('Profile') }}
                                     </arc-dropdown-link>
 
-                                    <!-- <arc-dropdown-link :href="route('user_subscriptions')">
+                                    <arc-dropdown-link :href="route('bank-details')">
+                                        {{ __('My Bank Details') }}
+                                    </arc-dropdown-link>
+
+                                    <arc-dropdown-link :href="route('user_subscriptions')">
                                         {{ __('My Subscriptions') }}
-                                    </arc-dropdown-link> -->
+                                    </arc-dropdown-link>
 
                                     <arc-dropdown-link :href="route('user_payments')">
                                         {{ __('My Payments') }}

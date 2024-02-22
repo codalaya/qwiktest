@@ -31,10 +31,12 @@ class SkillCrudController extends Controller
     {
         return Inertia::render('Admin/Skills', [
             'sections' => Section::select(['name', 'id'])->get(),
-            'skills' => function () use($filters) {
-                return fractal(Skill::filter($filters)->with('section:id,name')
-                    ->orderBy('name')->paginate(request()->perPage != null ? request()->perPage : 10),
-                    new SkillTransformer())->toArray();
+            'skills' => function () use ($filters) {
+                return fractal(
+                    Skill::filter($filters)->with('section:id,name')
+                        ->orderBy('name')->paginate(request()->perPage != null ? request()->perPage : 10),
+                    new SkillTransformer()
+                )->toArray();
             },
         ]);
     }
@@ -53,7 +55,7 @@ class SkillCrudController extends Controller
             'skills' => fractal(Skill::select(['id', 'name', 'section_id'])
                 ->filter($filters)
                 ->with('section:id,name')
-                ->where('name', 'like', '%'.$query.'%')->limit(20)
+                ->where('name', 'like', '%' . $query . '%')->limit(20)
                 ->get(), new SkillSearchTransformer())
                 ->toArray()['data']
         ]);
@@ -116,16 +118,20 @@ class SkillCrudController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $skill = Skill::find($id);
+        $skill = Skill::find($id);
 
-            if(!$skill->canSecureDelete('topics', 'questions', 'practiceSets')) {
+        if ($skill->slug === 'general') {
+            return redirect()->back()->with('errorMessage', 'General is default & can not be deleted!');
+        }
+
+        try {
+
+            if (!$skill->canSecureDelete('topics', 'questions', 'practiceSets')) {
                 return redirect()->back()->with('errorMessage', 'Unable to Delete Skill . Remove all associations and Try again!');
             }
 
             $skill->secureDelete('topics', 'questions', 'practiceSets');
-        }
-        catch (\Illuminate\Database\QueryException $e) {
+        } catch (\Illuminate\Database\QueryException $e) {
             return redirect()->back()->with('errorMessage', 'Unable to Delete Skill . Remove all associations and Try again!');
         }
         return redirect()->back()->with('successMessage', 'Skill was successfully deleted!');

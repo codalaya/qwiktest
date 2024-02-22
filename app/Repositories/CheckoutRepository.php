@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 use App\Settings\PaymentSettings;
 use App\Settings\TaxSettings;
+use Illuminate\Support\Str;
 
 class CheckoutRepository
 {
@@ -37,11 +38,13 @@ class CheckoutRepository
         $total = 0;
 
         // Add items and calculate total (for now one plan only)
+        $plural = Str::plural('Time', $plan->duration);
+
         array_push($items, [
-            'name' => "{$plan->category->name} {$plan->name} - {$plan->duration} Months Plan",
+            'name' => "{$plan->category->name} {$plan->name} - {$plan->duration} {$plural} Game Plan",
             'amount' => $plan->has_discount ? $plan->total_discounted_price : $plan->total_price,
             'amount_formatted' => $plan->has_discount ? $plan->formatted_total_discounted_price : $plan->formatted_total_price,
-            'discount' => $plan->has_discount ? $plan->discount_percentage.'%' : null,
+            'discount' => $plan->has_discount ? $plan->discount_percentage . '%' : null,
             'original_price' => $plan->formatted_total_price,
         ]);
 
@@ -52,10 +55,10 @@ class CheckoutRepository
         }
 
         // calculate tax amount
-        if($this->taxSettings->enable_tax) {
-            if($this->taxSettings->tax_amount_type == 'percentage') {
+        if ($this->taxSettings->enable_tax) {
+            if ($this->taxSettings->tax_amount_type == 'percentage') {
                 $amount = ($subTotal * $this->taxSettings->tax_amount) / 100;
-                $name = $this->taxSettings->tax_name.' '.$this->taxSettings->tax_amount.'%';
+                $name = $this->taxSettings->tax_name . ' ' . $this->taxSettings->tax_amount . '%';
             } else {
                 $amount = $this->taxSettings->tax_amount;
                 $name = $this->taxSettings->tax_name;
@@ -69,10 +72,10 @@ class CheckoutRepository
         }
 
         // calculate additional tax amount
-        if($this->taxSettings->enable_additional_tax) {
-            if($this->taxSettings->additional_tax_amount_type == 'percentage') {
+        if ($this->taxSettings->enable_additional_tax) {
+            if ($this->taxSettings->additional_tax_amount_type == 'percentage') {
                 $amount = ($subTotal * $this->taxSettings->additional_tax_amount) / 100;
-                $name = $this->taxSettings->additional_tax_name.' '.$this->taxSettings->additional_tax_amount.'%';
+                $name = $this->taxSettings->additional_tax_name . ' ' . $this->taxSettings->additional_tax_amount . '%';
             } else {
                 $amount = $this->taxSettings->additional_tax_amount;
                 $name = $this->taxSettings->additional_tax_name;
@@ -110,7 +113,7 @@ class CheckoutRepository
         $paymentProcessors = [];
 
         foreach (config('qwiktest.payment_processors') as $key => $value) {
-            if($this->paymentSettings->toArray()['enable_'.$key]) {
+            if ($this->paymentSettings->toArray()['enable_' . $key]) {
                 array_push($paymentProcessors, [
                     'code' => $key,
                     'name' => $value['name'],

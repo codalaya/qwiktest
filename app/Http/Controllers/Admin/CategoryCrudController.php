@@ -28,9 +28,11 @@ class CategoryCrudController extends Controller
     {
         return Inertia::render('Admin/Categories', [
             'categories' => function () use ($filters) {
-                return fractal(Category::filter($filters)
-                    ->paginate(request()->perPage != null ? request()->perPage : 10),
-                    new CategoryTransformer())->toArray();
+                return fractal(
+                    Category::filter($filters)
+                        ->paginate(request()->perPage != null ? request()->perPage : 10),
+                    new CategoryTransformer()
+                )->toArray();
             },
         ]);
     }
@@ -91,15 +93,19 @@ class CategoryCrudController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $category = Category::find($id);
+        $category = Category::find($id);
 
-            if(!$category->canSecureDelete('subCategories')) {
+        if ($category->slug == 'general') {
+            return redirect()->back()->with('errorMessage', 'Default Category can not be deleted!');
+        }
+
+        try {
+
+            if (!$category->canSecureDelete('subCategories')) {
                 return redirect()->back()->with('errorMessage', 'Unable to Delete Category . Remove all associations and Try again!');
             }
 
             $category->secureDelete('subCategories');
-
         } catch (\Illuminate\Database\QueryException $e) {
             return redirect()->back()
                 ->with('errorMessage', 'Unable to Delete Category . Remove all associations and Try again!');

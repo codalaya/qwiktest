@@ -18,6 +18,7 @@ use App\Http\Controllers\User\SubscriptionController;
 use App\Http\Controllers\User\PaymentController;
 use App\Http\Controllers\User\ExamController;
 use App\Http\Controllers\User\ExamScheduleController;
+use App\Http\Controllers\User\WithdrawController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
@@ -70,6 +71,11 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::post('/cancel-subscription/{id}', [SubscriptionController::class, 'cancelSubscription'])->name('cancel_my_subscription');
     Route::get('/payments', [PaymentController::class, 'index'])->name('user_payments');
     Route::get('/download-invoice/{id}', [PaymentController::class, 'downloadInvoice'])->name('download_invoice');
+
+    Route::get('/bank-details', [WithdrawController::class, 'showBankDetailsPage'])->name('bank-details');
+    Route::post('/bank-details', [WithdrawController::class, 'updateDetails']);
+    Route::get('/withdraw', [WithdrawController::class, 'showWithdrawlPage'])->name('withdraw');
+    Route::post('/withdraw', [WithdrawController::class, 'storeWithdraw']);
 
     /*
     |--------------------------------------------------------------------------

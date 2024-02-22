@@ -42,7 +42,7 @@ class QuizScheduleCrudController extends Controller
         }
 
         return Inertia::render('Admin/QuizSchedules', [
-            'quiz' => $quiz->only(['id', 'title']),
+            'quiz' => $quiz->only(['id', 'title', 'slug']),
             'steps' => $this->repository->getSteps($quiz->id, 'schedules'),
             'editFlag' => true,
             'quizSchedules' => function () use ($filters, $quiz) {

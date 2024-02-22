@@ -24,7 +24,7 @@ class PlanTransformer extends TransformerAbstract
             'category' => $plan->category->name,
             'price' => formatPrice($plan->price, $paymentSettings->currency_symbol, $paymentSettings->currency_symbol_position),
             'code' => $plan->code,
-            'duration' => $plan->duration.' '.__('Months'),
+            'duration' => $plan->duration . ' ' . __('Games'),
             'status' => $plan->is_active,
         ];
     }

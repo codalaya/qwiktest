@@ -3,6 +3,7 @@
 
 namespace App\Traits;
 
+use App\Models\Subscription;
 use Illuminate\Support\Facades\Cookie;
 
 trait SubscriptionTrait
@@ -23,15 +24,16 @@ trait SubscriptionTrait
             })
             ->where('category_id', '=', $category)
             ->where('ends_at', '>', now()->toDateTimeString())
+            // ->where('remained_game_play', '>', 0)
             ->where('status', '=', 'active')
             ->first();
 
-        if(!$subscription) {
+        if (!$subscription) {
             return false;
         }
 
         // feature check
-        if($feature) {
+        if ($feature) {
             $features = $subscription->plan->features->pluck('code')->toArray();
             return in_array($feature, $features);
         } else {

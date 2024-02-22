@@ -2,15 +2,26 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Category;
 use App\Models\ExamSession;
+use App\Models\Payment;
 use App\Models\Question;
 use App\Models\Quiz;
 use App\Models\QuizSchedule;
 use App\Models\QuizSession;
+use App\Models\Skill;
+use App\Models\SubCategory;
+use App\Models\SubCategoryType;
+use App\Models\Subscription;
+use App\Models\Tag;
 use App\Models\User;
+use App\Models\UserGroup;
 use App\Services\CalculateCurrentRankingService;
 use App\Settings\LocalizationSettings;
 use App\Settings\QuizPrizeSettings;
+use App\Settings\RazorpaySettings;
+use App\Settings\SiteSettings;
+use Bavix\Wallet\Models\Transaction;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -47,9 +58,30 @@ class TestCommand extends Command
 
     public function handle()
     {
-        $users = [1, 0];
-        $users = User::whereIn('id', $users)->get();
-        dd($users->count());
+        $user = User::firstWhere('email', 'ambika@gmail.com');
+        dd($user->toArray());
+        // dd($user->subscriptions()->latest()->first()->remained_game_play);
+        // dd(QuizSession::where('code', '24e1f7f8-14e1-45a8-9ea9-59fd3f714fc3')->first());
+        // $usergroups = UserGroup::all();
+        // $user->userGroups()->sync([2]);
+        // dd($user->userGroups->toArray());
+        // $subscription = Subscription::all();
+        // dump($subscription->toArray());
+
+        // $subcategory = SubCategory::all();
+        // dd($subcategory->toArray());
+        // $subscription = $user->subscriptions()->latest()->first();
+        // dump($subscription->remained_game_play);
+        // $subscription->update([
+        //     'remained_game_play' => DB::raw('GREATEST(remained_game_play, 10)')
+        // ]);
+
+        $this->eraseQuizPlay();
+    }
+
+    public function eraseQuizPlay()
+    {
+        return DB::table('quiz_session_questions')->delete();
     }
 
     public function getS()

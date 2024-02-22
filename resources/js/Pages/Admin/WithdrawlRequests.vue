@@ -1,41 +1,44 @@
 <template>
     <admin-layout>
         <template #header>
-            <h4 class="page-heading">{{ __('Plans') }}</h4>
+            <h4 class="page-heading">{{ __('Withdrawl Requests') }}</h4>
         </template>
         <template #actions>
-            <button @click="createForm = true" class="qt-btn qt-btn-success">
-                {{ __('New') }} {{ __('Plan') }}
-            </button>
+            <inertia-link :href="route('withdrawl-requests.create')" class="qt-btn qt-btn-success">
+                {{ __('New') }} {{ __('Withdrawl REquest') }}
+            </inertia-link>
         </template>
 
-        <div class="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div class="card">
                 <div class="card-body">
                     <vue-good-table mode="remote" @on-page-change="onPageChange" @on-column-filter="onColumnFilter"
                         @on-per-page-change="onPerPageChange" :pagination-options="options" :columns="columns"
-                        :totalRows="plans.meta.pagination.total" :rows="plans.data" :rtl="$page.props.rtl">
+                        :totalRows="requests.meta.pagination.total" :rows="requests.data" :rtl="$page.props.rtl">
                         <template slot="table-row" slot-scope="props">
+
                             <!-- Code Column -->
                             <div v-if="props.column.field === 'code'">
-                                <Tag v-clipboard:copy="props.row.code" :value="props.row.code"
-                                    v-clipboard:success="handleCopyStatus" icon="pi pi-copy"
-                                    class="w-full p-mr-2 cursor-pointer" />
+                                <Tag v-clipboard:copy="props.row.code" severity="info"
+                                    v-clipboard:success="handleCopyStatus" :value="props.row.code" icon="pi pi-copy"
+                                    class="w-full p-mr-2 mb-2 text-xs cursor-pointer" />
                             </div>
 
                             <!-- Status Column -->
                             <div v-else-if="props.column.field === 'status'">
-                                <span :class="[props.row.status ? 'badge-success' : 'badge-danger', 'badge']">{{
-                                    props.row.status ? __('Active') : __('In-active') }}</span>
+                                <span
+                                    :class="[props.row.status === 'completed' ? 'badge-success' : 'badge-danger', 'badge']">{{
+                                        __(props.row.status) }}</span>
                             </div>
 
-                            <!-- Action Column -->
+                            <!-- Actions Column -->
                             <div v-else-if="props.column.field === 'actions'">
                                 <actions-dropdown>
                                     <template #actions>
                                         <button @click="editForm = true; currentId = props.row.id;" class="action-item">{{
-                                            __('Edit') }}</button>
-                                        <button @click="deletePlan(props.row.id)" class="action-item">{{ __('Delete')
+                                            __('Edit')
+                                        }}</button>
+                                        <button @click="deleteRequest(props.row.id)" class="action-item">{{ __('Delete')
                                         }}</button>
                                     </template>
                                 </actions-dropdown>
@@ -45,29 +48,14 @@
                             <span v-else>
                                 {{ props.formattedRow[props.column.field] }}
                             </span>
+
                         </template>
-                        <div slot="emptystate">
-                            <no-data-table>
-                                <template slot="action">
-                                    <button @click="createForm = true" class="qt-btn-sm qt-btn-primary" type="button">
-                                        {{ __('New') }} {{ __('Plan') }}
-                                    </button>
-                                </template>
-                            </no-data-table>
-                        </div>
                     </vue-good-table>
 
-                    <!-- Sidebar Forms -->
-                    <Sidebar position="right" :visible.sync="createForm" class="p-sidebar-md">
-                        <PlanForm :form-errors="errors" :sub-categories="subCategories" @close="createForm = false"
-                            :features="features" :title="__('New') + ' ' + __('Plan')" />
-                    </Sidebar>
                     <Sidebar position="right" :visible.sync="editForm" class="p-sidebar-md">
-                        <PlanForm :edit-flag.sync="editForm" :sub-categories="subCategories" :plan-id="currentId"
-                            :features="features" :form-errors="errors" @close="editForm = false"
-                            :title="__('Edit') + ' ' + __('Plan')" />
+                        <RequestForm :edit-flag.sync="editForm" :request-id="currentId" :form-errors="errors"
+                            @close="editForm = false" :title="__('Edit') + ' ' + __('Request')" />
                     </Sidebar>
-
                 </div>
             </div>
         </div>
@@ -75,37 +63,35 @@
 </template>
 
 <script>
-import AdminLayout from '@/Layouts/AdminLayout'
-import Column from 'primevue/column';
-import InputText from 'primevue/inputtext';
-import Toolbar from 'primevue/toolbar';
-import Button from 'primevue/button';
+import AdminLayout from '@/Layouts/AdminLayout';
+import ArcDropdown from '@/Components/Dropdown';
+import ActionsDropdown from "@/Components/ActionsDropdown";
+import ArcDropdownLink from '@/Components/DropdownLink';
 import Sidebar from 'primevue/sidebar'
-import PlanForm from "@/Components/Forms/PlanForm";
+import Toast from 'primevue/toast';
 import Chip from 'primevue/chip';
 import Tag from 'primevue/tag';
+import Button from 'primevue/button';
+import RequestForm from "@/Components/Forms/RequestForm";
 import NoDataTable from "@/Components/NoDataTable";
-import ActionsDropdown from "@/Components/ActionsDropdown";
 
 export default {
     components: {
-        PlanForm,
         AdminLayout,
-        Column,
-        InputText,
-        Toolbar,
-        Button,
-        Sidebar,
+        ArcDropdown,
+        ArcDropdownLink,
+        ActionsDropdown,
+        Toast,
         Chip,
         Tag,
+        Button,
         NoDataTable,
-        ActionsDropdown
+        RequestForm, Sidebar,
     },
     props: {
-        plans: Object,
+        requests: Object,
         errors: Object,
-        subCategories: Array,
-        features: Array,
+        statusFilters: Array,
     },
     data() {
         return {
@@ -115,7 +101,7 @@ export default {
             columns: [
                 {
                     label: this.__('Code'),
-                    field: 'code',
+                    field: 'id',
                     filterOptions: {
                         enabled: true,
                         placeholder: this.__('Search') + ' ' + this.__('Code'),
@@ -123,10 +109,11 @@ export default {
                         trigger: 'enter',
                     },
                     sortable: false,
+                    width: '11rem',
                 },
                 {
-                    label: this.__('Name'),
-                    field: 'name',
+                    label: this.__('User Name'),
+                    field: 'user_name',
                     filterOptions: {
                         enabled: true,
                         placeholder: this.__('Search') + ' ' + this.__('Name'),
@@ -136,32 +123,17 @@ export default {
                     sortable: false,
                 },
                 {
-                    label: this.__('Game Plays'),
-                    field: 'duration',
+                    label: this.__('Amount'),
+                    field: 'amount',
                     filterOptions: {
                         enabled: true,
-                        placeholder: this.__('Search') + ' ' + this.__('Game Plays'),
+                        placeholder: this.__('Search') + ' ' + this.__('Amount'),
                         filterValue: null,
                         trigger: 'enter',
                     },
                     sortable: false,
                 },
-                {
-                    label: this.__('Price') + '/' + this.__('Month'),
-                    field: 'price',
-                    sortable: false,
-                },
-                {
-                    label: this.__('Category'),
-                    field: 'category',
-                    filterOptions: {
-                        enabled: true,
-                        placeholder: this.__('Search') + ' ' + this.__('Category'),
-                        filterValue: null,
-                        trigger: 'enter',
-                    },
-                    sortable: false,
-                },
+
                 {
                     label: this.__('Status'),
                     field: 'status',
@@ -170,22 +142,22 @@ export default {
                         enabled: true,
                         placeholder: this.__('Search') + ' ' + this.__('Status'),
                         filterValue: null,
-                        filterDropdownItems: [{ value: 1, text: this.__('Active') }, { value: 0, text: this.__('In-active') }],
+                        filterDropdownItems: [{ value: 'completed', text: this.__('Completed') }, { value: 'pending', text: this.__('Pending') }],
                     },
-                    width: '11rem'
                 },
                 {
                     label: this.__('Actions'),
                     field: 'actions',
                     sortable: false,
-                    width: '12rem'
-                },
+                    width: '200px',
+                    tdClass: 'text-center',
+                }
             ],
             options: {
                 enabled: true,
                 mode: 'pages',
-                perPage: this.plans.meta.pagination.per_page,
-                setCurrentPage: this.plans.meta.pagination.current_page,
+                perPage: this.requests.meta.pagination.per_page,
+                setCurrentPage: this.requests.meta.pagination.current_page,
                 perPageDropdown: [10, 20, 50, 100],
                 dropdownAllowAll: false,
             },
@@ -209,7 +181,7 @@ export default {
 
     computed: {
         title() {
-            return this.__('Plans') + ' - ' + this.$page.props.general.app_name;
+            return this.__('Withdrawl Requests') + ' - ' + this.$page.props.general.app_name;
         }
     },
     methods: {
@@ -259,16 +231,23 @@ export default {
                 preserveScroll: true,
             });
         },
-        deletePlan(id) {
+
+        goToSchedules(id) {
+            this.$inertia.get(route('withdrawl-requests.schedules.index', { request: id }));
+        },
+        goToAnalytics(id) {
+            this.$inertia.get(route('withdrawl-requests.overall_report', { request: id }));
+        },
+        deleteRequest(id) {
             this.$confirm.require({
                 header: this.__('Confirm Delete'),
-                message: this.__('This action will remove all associated payments & subscriptions. Do you want to delete this plan?'),
+                message: this.__('This will remove all the user sessions. Do you want to delete this request?'),
                 icon: 'pi pi-info-circle',
                 acceptClass: 'p-button-danger',
                 rejectLabel: this.__('Cancel'),
                 acceptLabel: this.__('Delete'),
                 accept: () => {
-                    this.$inertia.delete(route('plans.destroy', { id: id }), {}, {
+                    this.$inertia.delete(route('withdrawl-requests.destroy', { id: id }), {}, {
                         onSuccess: () => {
                             this.$toast.add({
                                 severity: 'info',
@@ -283,7 +262,6 @@ export default {
 
                 }
             });
-
         },
         handleCopyStatus(status) {
             if (status) {
@@ -291,7 +269,7 @@ export default {
                     severity: 'success',
                     summary: this.__('Copied'),
                     detail: this.__('Copied Successfully!'),
-                    life: 3000
+                    life: 2000
                 });
             }
         }

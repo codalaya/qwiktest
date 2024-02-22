@@ -42,6 +42,7 @@ use App\Http\Controllers\Admin\ExamQuestionController;
 use App\Http\Controllers\Admin\ExamScheduleCrudController;
 use App\Http\Controllers\Admin\ExamAnalyticsController;
 use App\Http\Controllers\Admin\QuestionTimeoutController;
+use App\Http\Controllers\Admin\WithdrawlRequestsCrudController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -225,6 +226,7 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('admin')->group(function
     |--------------------------------------------------------------------------
     */
     Route::resource('plans', PlanCrudController::class);
+    Route::resource('withdrawl-requests', WithdrawlRequestsCrudController::class,);
 
     /*
     |--------------------------------------------------------------------------

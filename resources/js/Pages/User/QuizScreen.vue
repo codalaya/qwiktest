@@ -217,8 +217,7 @@
                             </button>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button @click="nextQuestion" class="focus:outline-none"
-                                :disabled="(notVisitedQuestions === 0)">
+                            <button @click="nextQuestion" class="focus:outline-none">
                                 <next-button :name="nextBtnText"></next-button>
                             </button>
                         </div>
@@ -594,9 +593,7 @@ export default {
             return (this.questions.length > 0 && this.current_question < this.questions.length) ?
                 this.questions[this.current_question].default_time : this.remainingTime;
         },
-        shouldNextBtnDisable() {
-            return this.notVisitedQuestions === 0;
-        }
+
     },
 
     mounted() {

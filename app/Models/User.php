@@ -39,17 +39,7 @@ class User extends Authenticatable implements Wallet, MustVerifyEmail
     | GLOBAL VARIABLES
     |--------------------------------------------------------------------------
     */
-
-    protected $fillable = [
-        'first_name',
-        'last_name',
-        'user_name',
-        'mobile',
-        'email',
-        'password',
-        'is_active',
-        'preferences'
-    ];
+    protected $guarded = [];
 
     protected $hidden = [
         'password',
@@ -114,6 +104,11 @@ class User extends Authenticatable implements Wallet, MustVerifyEmail
         return $this->hasMany(Subscription::class);
     }
 
+    public function withdrawlRequests()
+    {
+        return $this->hasMany(WithdrawlRequest::class);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES
@@ -161,5 +156,4 @@ class User extends Authenticatable implements Wallet, MustVerifyEmail
     | MUTATORS
     |--------------------------------------------------------------------------
     */
-
 }

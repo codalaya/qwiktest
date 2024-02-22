@@ -2,6 +2,7 @@
 
 
 namespace App\Http\Controllers\Admin;
+
 use App\Filters\UserGroupFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreUserGroupRequest;
@@ -25,11 +26,15 @@ class UserGroupCrudController extends Controller
      */
     public function index(UserGroupFilters $filters)
     {
-        return Inertia::render('Admin/UserGroups', [
-                'userGroups' => function () use($filters) {
-                    return fractal(UserGroup::filter($filters)
-                        ->paginate(request()->perPage != null ? request()->perPage : 10),
-                        new UserGroupTransformer())->toArray();
+        return Inertia::render(
+            'Admin/UserGroups',
+            [
+                'userGroups' => function () use ($filters) {
+                    return fractal(
+                        UserGroup::filter($filters)
+                            ->paginate(request()->perPage != null ? request()->perPage : 10),
+                        new UserGroupTransformer()
+                    )->toArray();
                 },
             ]
         );
@@ -96,18 +101,22 @@ class UserGroupCrudController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $userGroup = UserGroup::find($id);
+        $userGroup = UserGroup::find($id);
 
-            if(!$userGroup->canSecureDelete('users', 'quizSchedules')) {
+        if ($userGroup->slug === 'general') {
+            return redirect()->back()->with('errorMessage', 'General group should not be deleted!');
+        }
+
+        try {
+
+            if (!$userGroup->canSecureDelete('users', 'quizSchedules')) {
                 return redirect()->back()->with('errorMessage', 'Unable to Delete User Group. Remove all associations and Try again!');
             }
 
             $userGroup->secureDelete('users', 'quizSchedules');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return redirect()->back()->with('errorMessage', 'Unable to Delete User Group. Remove all associations and Try again!');
         }
-        catch (\Illuminate\Database\QueryException $e){
-            return redirect()->back()->with('errorMessage','Unable to Delete User Group. Remove all associations and Try again!');
-        }
-        return redirect()->back()->with('successMessage','User Group Deleted successfully!');
+        return redirect()->back()->with('successMessage', 'User Group Deleted successfully!');
     }
 }

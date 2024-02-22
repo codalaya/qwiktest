@@ -1,6 +1,7 @@
 <template>
     <auth-layout>
-        <h1 class="mt-8 text-xl sm:text-2xl font-semibold text-black tracking-ringtighter title-font">{{ __('Login To Your Account') }}</h1>
+        <h1 class="mt-8 text-xl sm:text-2xl font-semibold text-black tracking-ringtighter title-font">
+            {{ __('Login To Your Account') }}</h1>
         <arc-validation-errors class="mb-4" />
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
@@ -10,11 +11,15 @@
             <div class="mt-8 w-full">
                 <div class="flex flex-col mt-8">
                     <label for="email" class="text-sm leading-tight">{{ __('Email') }} / {{ __('User Name') }}</label>
-                    <input id="email" type="text" v-model="form.email" class="h-10 px-2 w-full rounded mt-2 text-gray-600 focus:outline-none focus:border focus:border-green-700 border-gray-300 border shadow" required autofocus/>
+                    <input id="email" type="text" v-model="form.email"
+                        class="h-10 px-2 w-full rounded mt-2 text-gray-600 focus:outline-none focus:border focus:border-green-700 border-gray-300 border shadow"
+                        required autofocus />
                 </div>
                 <div class="flex flex-col mt-5">
                     <label for="password" class="text-sm leading-tight">{{ __('Password') }}</label>
-                    <input id="password" type="password" v-model="form.password" class="h-10 px-2 w-full rounded mt-2 text-gray-600 focus:outline-none focus:border focus:border-green-700 border-gray-300 border shadow" required autocomplete="current-password"/>
+                    <input id="password" type="password" v-model="form.password"
+                        class="h-10 px-2 w-full rounded mt-2 text-gray-600 focus:outline-none focus:border focus:border-green-700 border-gray-300 border shadow"
+                        required autocomplete="current-password" />
                 </div>
             </div>
             <div class="mt-8 w-full flex justify-between">
@@ -22,11 +27,13 @@
                     <arc-checkbox name="remember" v-model="form.remember" />
                     <span class="ltr:ml-2 rtl:mr-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
                 </label>
-                <inertia-link class="text-sm text-secondary" v-if="canResetPassword" :href="route('password.request')">{{ __('Forgot Password?') }}</inertia-link>
+                <inertia-link class="text-sm text-secondary" v-if="canResetPassword" :href="route('password.request')">{{
+                    __('Forgot Password?') }}</inertia-link>
             </div>
 
             <div class="flex items-center mt-8">
-                <arc-button class="h-10 w-full justify-center rounded bg-primary hover:opacity-90" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <arc-button class="h-10 w-full justify-center rounded bg-primary hover:opacity-90"
+                    :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     {{ __('Login') }}
                 </arc-button>
             </div>
@@ -38,8 +45,11 @@
             <button @click="fillCredentials('student')" class="qt-btn qt-btn-sm qt-btn-primary">Student</button>
             <button @click="fillCredentials('guest')" class="qt-btn qt-btn-sm qt-btn-primary">Guest</button>
         </div>
-        <div v-if="!$page.props.isDemo && $page.props.general.can_register" class="my-6 flex items-center justify-between"><span class="border-b dark:border-gray-600 w-1/5 md:w-1/4"></span> <span class="text-xs text-gray-500 dark:text-gray-400 uppercase">or</span> <span class="border-b dark:border-gray-600 w-1/5 md:w-1/4"></span></div>
-        <div v-if="!$page.props.isDemo && $page.props.general.can_register" class="mb-6 text-sm text-center">
+        <div v-if="$page.props.general.can_register" class="my-6 flex items-center justify-between"><span
+                class="border-b dark:border-gray-600 w-1/5 md:w-1/4"></span> <span
+                class="text-xs text-gray-500 dark:text-gray-400 uppercase">or</span> <span
+                class="border-b dark:border-gray-600 w-1/5 md:w-1/4"></span></div>
+        <div v-if="$page.props.general.can_register" class="mb-6 text-sm text-center">
             <span>{{ __('Don’t Have An Account?') }} </span>
             <inertia-link class="underline text-secondary" :href="route('register')">{{ __('Register') }}</inertia-link>
         </div>
@@ -47,81 +57,85 @@
 </template>
 
 <script>
-    import AuthLayout from '@/Layouts/AuthLayout';
-    import ArcCheckbox from '@/Components/Checkbox';
-    import ArcValidationErrors from '@/Components/ValidationErrors';
-    import ArcAuthenticationCard from "@/Components/AuthenticationCard";
-    import ArcInput from "@/Components/Input";
-    import ArcLabel from "@/Components/Label";
-    import ArcButton from "@/Components/Button";
-    export default {
-        components: {
-            AuthLayout,
-            ArcAuthenticationCard,
-            ArcCheckbox,
-            ArcValidationErrors,
-            ArcInput,
-            ArcLabel,
-            ArcButton,
-        },
+import AuthLayout from '@/Layouts/AuthLayout';
+import ArcCheckbox from '@/Components/Checkbox';
+import ArcValidationErrors from '@/Components/ValidationErrors';
+import ArcAuthenticationCard from "@/Components/AuthenticationCard";
+import ArcInput from "@/Components/Input";
+import ArcLabel from "@/Components/Label";
+import ArcButton from "@/Components/Button";
+export default {
+    components: {
+        AuthLayout,
+        ArcAuthenticationCard,
+        ArcCheckbox,
+        ArcValidationErrors,
+        ArcInput,
+        ArcLabel,
+        ArcButton,
+    },
 
-        props: {
-            settings: Object,
-            canResetPassword: Boolean,
-            status: String
-        },
+    props: {
+        settings: Object,
+        canResetPassword: Boolean,
+        status: String
+    },
 
-        data() {
-            return {
-                form: this.$inertia.form({
-                    email: '',
-                    password: '',
-                    remember: false
+    data() {
+        return {
+            form: this.$inertia.form({
+                email: '',
+                password: '',
+                remember: false
+            })
+        }
+    },
+
+    metaInfo() {
+        return {
+            title: this.title
+        }
+    },
+
+    computed: {
+        title() {
+            return this.__('Login') + ' - ' + this.$page.props.general.app_name;
+        }
+    },
+
+    mounted() {
+        console.log('this.generals', this.$page.props.general.can_register)
+    },
+
+    methods: {
+        submit() {
+            this.form
+                .transform(data => ({
+                    ...data,
+                    remember: this.form.remember ? 'on' : ''
+                }))
+                .post(this.route('login'), {
+                    onFinish: () => this.form.reset('password'),
                 })
-            }
         },
-
-        metaInfo() {
-            return {
-                title: this.title
+        fillCredentials(role) {
+            if (role === 'admin') {
+                this.form.email = 'admin';
+                this.form.password = 'Admin@123';
             }
-        },
-
-        computed: {
-            title() {
-                return this.__('Login')+' - ' + this.$page.props.general.app_name;
+            if (role === 'instructor') {
+                this.form.email = 'instructor';
+                this.form.password = 'Instructor@123';
             }
-        },
-
-        methods: {
-            submit() {
-                this.form
-                    .transform(data => ({
-                        ... data,
-                        remember: this.form.remember ? 'on' : ''
-                    }))
-                    .post(this.route('login'), {
-                        onFinish: () => this.form.reset('password'),
-                    })
-            },
-            fillCredentials(role) {
-                if(role === 'admin') {
-                    this.form.email = 'admin';
-                    this.form.password = 'Admin@123';
-                }
-                if(role === 'instructor') {
-                    this.form.email = 'instructor';
-                    this.form.password = 'Instructor@123';
-                }
-                if(role === 'student') {
-                    this.form.email = 'student';
-                    this.form.password = 'Student@123';
-                }
-                if(role === 'guest') {
-                    this.form.email = 'guest';
-                    this.form.password = 'Guest@123';
-                }
+            if (role === 'student') {
+                this.form.email = 'student';
+                this.form.password = 'Student@123';
+            }
+            if (role === 'guest') {
+                this.form.email = 'guest';
+                this.form.password = 'Guest@123';
             }
         }
     }
+}
 </script>

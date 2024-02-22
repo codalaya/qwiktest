@@ -101,7 +101,9 @@ class QuizController extends Controller
 
             // deduct wallet points in case of not having a subscription for a paid quiz
             if ($session) {
-                if ($quiz->is_paid && !$subscription && $quiz->can_redeem) {
+                if ($subscription) {
+                    auth()->user()->subscriptions()->latest()->first()->decrement('remained_game_play');
+                } elseif ($quiz->is_paid && !$subscription && $quiz->can_redeem) {
                     auth()->user()->withdraw($quiz->points_required, [
                         'session' => $session->code,
                         'description' => 'Attempt of Quiz ' . $quiz->title,
@@ -216,24 +218,26 @@ class QuizController extends Controller
             }
         }
         /*Insert or Update Session Question*/
-        DB::table('quiz_session_questions')->upsert(
-            [
-                'question_id' => $question->id,
-                'original_question' => formatQuestionProperty($question->question, $question->questionType->code),
-                'quiz_session_id' => $session->id,
-                'quiz_id' => $session->quiz_id,
-                'user_id' => auth()->user()->id,
-                'user_answer' => serialize($request->user_answer),
-                'time_taken' => $request->time_taken,
-                'is_correct' => $isCorrect,
-                'status' => $request->status,
-                'marks_earned' => $marksEarned,
-                'marks_deducted' => $marksDeducted,
-                'created_at' => now(),
-            ],
-            ['question_id', 'quiz_session_id'],
-            ['user_answer', 'time_taken', 'is_correct', 'status', 'marks_earned', 'marks_deducted', 'user_id', 'quiz_id']
-        );
+        if (!DB::table('quiz_session_questions')->where('question_id', $question->id)->where('quiz_session_id', $session->id)->exists()) {
+            DB::table('quiz_session_questions')->upsert(
+                [
+                    'question_id' => $question->id,
+                    'original_question' => formatQuestionProperty($question->question, $question->questionType->code),
+                    'quiz_session_id' => $session->id,
+                    'quiz_id' => $session->quiz_id,
+                    'user_id' => auth()->user()->id,
+                    'user_answer' => serialize($request->user_answer),
+                    'time_taken' => $request->time_taken,
+                    'is_correct' => $isCorrect,
+                    'status' => $request->status,
+                    'marks_earned' => $marksEarned,
+                    'marks_deducted' => $marksDeducted,
+                    'created_at' => now(),
+                ],
+                ['question_id', 'quiz_session_id'],
+                ['user_answer', 'time_taken', 'is_correct', 'status', 'marks_earned', 'marks_deducted', 'user_id', 'quiz_id']
+            );
+        }
 
         /*Update Session */
         $session->current_question = $request->current_question;
@@ -267,6 +271,7 @@ class QuizController extends Controller
         $session->results = $this->repository->sessionResults($session, $quiz);
         $session->status = 'completed';
         $session->completed_at = Carbon::now()->toDateTimeString();
+        resolve(CalculateCurrentRankingService::class)->giveReward($session);
         $session->update();
 
         return redirect()->route('quiz_thank_you', ['quiz' => $quiz->slug, 'session' => $session->code]);

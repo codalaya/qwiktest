@@ -39,7 +39,7 @@ class PaymentRepository
         ];
         $payment->save();
 
-        $payment->invoice_id = $billingSettings->invoice_prefix.'-'.Str::padLeft($payment->id, 5, '0');
+        $payment->invoice_id = $billingSettings->invoice_prefix . '-' . Str::padLeft($payment->id, 5, '0');
         $payment->update();
 
         return $payment;
@@ -54,7 +54,7 @@ class PaymentRepository
         $subscription->category_type = $data['category_type'];
         $subscription->category_id = $data['category_id'];
         $subscription->starts_at = Carbon::now()->toDateTimeString();
-        $subscription->ends_at = Carbon::now()->addMonths($data['duration'])->toDateTimeString();
+        $subscription->ends_at = Carbon::now()->addYears(10)->toDateTimeString();
         $subscription->status = $data['status'];
         $subscription->save();
 

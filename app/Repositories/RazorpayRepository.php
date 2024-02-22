@@ -33,7 +33,8 @@ class RazorpayRepository
     public function createOrder($paymentId, $amount)
     {
         return Http::withBasicAuth($this->settings->key_id, $this->settings->key_secret)
-            ->withHeaders(['Content-Type' => 'application/json']
+            ->withHeaders(
+                ['Content-Type' => 'application/json']
             )->post('https://api.razorpay.com/v1/orders', [
                 'receipt' => $paymentId,
                 'amount' => $amount,

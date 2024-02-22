@@ -29,10 +29,12 @@ class SectionCrudController extends Controller
     public function index(SectionFilters $filters)
     {
         return Inertia::render('Admin/Sections', [
-            'sections' => function () use($filters) {
-                return fractal(Section::filter($filters)
-                    ->paginate(request()->perPage != null ? request()->perPage : 10),
-                    new SectionTransformer())->toArray();
+            'sections' => function () use ($filters) {
+                return fractal(
+                    Section::filter($filters)
+                        ->paginate(request()->perPage != null ? request()->perPage : 10),
+                    new SectionTransformer()
+                )->toArray();
             },
         ]);
     }
@@ -48,7 +50,7 @@ class SectionCrudController extends Controller
         $query = $request->get('query');
         return response()->json([
             'sections' => fractal(Section::select(['id', 'name'])
-                ->where('name', 'like', '%'.$query.'%')->limit(20)
+                ->where('name', 'like', '%' . $query . '%')->limit(20)
                 ->get(), new SectionSearchTransformer())
                 ->toArray()['data']
         ]);
@@ -110,16 +112,20 @@ class SectionCrudController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $section = Section::find($id);
+        $section = Section::find($id);
 
-            if(!$section->canSecureDelete('skills')) {
+        if ($section->slug === 'general') {
+            return redirect()->back()->with('errorMessage', 'General is default & can not be deleted!');
+        }
+
+        try {
+
+            if (!$section->canSecureDelete('skills')) {
                 return redirect()->back()->with('errorMessage', 'Unable to Delete Section . Remove all associations and Try again!');
             }
 
             $section->secureDelete('skills');
-        }
-        catch (\Illuminate\Database\QueryException $e){
+        } catch (\Illuminate\Database\QueryException $e) {
             return redirect()->back()->with('errorMessage', 'Unable to Delete Section . Remove all associations and Try again!');
         }
         return redirect()->back()->with('successMessage', 'Section was successfully deleted!');

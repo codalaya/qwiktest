@@ -1,15 +1,22 @@
 <template>
-    <nav :class="{'flex-1 bg-primary': !isMobile}" class="relative px-4 space-y-3">
-        <!-- <div class="bg-gray-100 bg-opacity-10 rounded-md py-3 px-4">
-            <h4 class="text-white text-base font-semibold">{{ $page.props.currentCategory ? $page.props.currentCategory.name : __('No Syllabus Selected')}}</h4>
+    <nav :class="{ 'flex-1 bg-primary': !isMobile }" class="relative px-4 space-y-3">
+        <div class="bg-gray-100 bg-opacity-10 rounded-md py-3 px-4">
+            <h4 class="text-white text-base font-semibold">{{ $page.props.currentCategory ? $page.props.currentCategory.name
+                : __('No Syllabus Selected') }}</h4>
             <inertia-link :href="route('change_syllabus')" class="text-secondary underline text-sm">
                 {{ $page.props.currentCategory ? __('Change Syllabus') : __('Choose Syllabus') }}
             </inertia-link>
-        </div> -->
+        </div>
         <inertia-link :href="route('user_dashboard')"
-                      :class="[route().current() === 'user_dashboard' ? 'bg-secondary text-white' : 'text-white hover:bg-secondary hover:text-white']"
-                      class="group rounded-md md py-3 px-4 flex items-center text-base font-semibold">
-            <svg :class="[route().current() === 'user_dashboard' ? 'text-white' : 'text-secondary']" class="group-hover:text-white ltr:mr-3 rtl:ml-3 flex-shrink-0 h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 5v2h-4V5h4M9 5v6H5V5h4m10 8v6h-4v-6h4M9 17v2H5v-2h4M21 3h-8v6h8V3zM11 3H3v10h8V3zm10 8h-8v10h8V11zm-10 4H3v6h8v-6z"/></svg>
+            :class="[route().current() === 'user_dashboard' ? 'bg-secondary text-white' : 'text-white hover:bg-secondary hover:text-white']"
+            class="group rounded-md md py-3 px-4 flex items-center text-base font-semibold">
+            <svg :class="[route().current() === 'user_dashboard' ? 'text-white' : 'text-secondary']"
+                class="group-hover:text-white ltr:mr-3 rtl:ml-3 flex-shrink-0 h-6 w-6" xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24" fill="currentColor">
+                <path d="M0 0h24v24H0V0z" fill="none" />
+                <path
+                    d="M19 5v2h-4V5h4M9 5v6H5V5h4m10 8v6h-4v-6h4M9 17v2H5v-2h4M21 3h-8v6h8V3zM11 3H3v10h8V3zm10 8h-8v10h8V11zm-10 4H3v6h8v-6z" />
+            </svg>
             {{ __('Dashboard') }}
         </inertia-link>
 
@@ -28,25 +35,53 @@
         </inertia-link> -->
 
         <inertia-link :href="route('quiz_dashboard')"
-                      :class="[route().current() === 'quiz_dashboard' ? 'bg-secondary text-white' : 'text-white hover:bg-secondary hover:text-white']"
-                      class="group rounded-md py-3 px-4 flex items-center text-base font-semibold">
-            <svg :class="[route().current() === 'quiz_dashboard' ? 'text-white' : 'text-secondary']" class="group-hover:text-white ltr:mr-3 rtl:ml-3 flex-shrink-0 h-6 w-6" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="currentColor"><g><path d="M0,0h24v24H0V0z" fill="none"/></g><g><path d="M4,6H2v14c0,1.1,0.9,2,2,2h14v-2H4V6z M20,2H8C6.9,2,6,2.9,6,4v12c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V4 C22,2.9,21.1,2,20,2z M20,16H8V4h12V16z M13.51,10.16c0.41-0.73,1.18-1.16,1.63-1.8c0.48-0.68,0.21-1.94-1.14-1.94 c-0.88,0-1.32,0.67-1.5,1.23l-1.37-0.57C11.51,5.96,12.52,5,13.99,5c1.23,0,2.08,0.56,2.51,1.26c0.37,0.6,0.58,1.73,0.01,2.57 c-0.63,0.93-1.23,1.21-1.56,1.81c-0.13,0.24-0.18,0.4-0.18,1.18h-1.52C13.26,11.41,13.19,10.74,13.51,10.16z M12.95,13.95 c0-0.59,0.47-1.04,1.05-1.04c0.59,0,1.04,0.45,1.04,1.04c0,0.58-0.44,1.05-1.04,1.05C13.42,15,12.95,14.53,12.95,13.95z"/></g></svg>
+            :class="[route().current() === 'quiz_dashboard' ? 'bg-secondary text-white' : 'text-white hover:bg-secondary hover:text-white']"
+            class="group rounded-md py-3 px-4 flex items-center text-base font-semibold">
+            <svg :class="[route().current() === 'quiz_dashboard' ? 'text-white' : 'text-secondary']"
+                class="group-hover:text-white ltr:mr-3 rtl:ml-3 flex-shrink-0 h-6 w-6" xmlns="http://www.w3.org/2000/svg"
+                enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="currentColor">
+                <g>
+                    <path d="M0,0h24v24H0V0z" fill="none" />
+                </g>
+                <g>
+                    <path
+                        d="M4,6H2v14c0,1.1,0.9,2,2,2h14v-2H4V6z M20,2H8C6.9,2,6,2.9,6,4v12c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V4 C22,2.9,21.1,2,20,2z M20,16H8V4h12V16z M13.51,10.16c0.41-0.73,1.18-1.16,1.63-1.8c0.48-0.68,0.21-1.94-1.14-1.94 c-0.88,0-1.32,0.67-1.5,1.23l-1.37-0.57C11.51,5.96,12.52,5,13.99,5c1.23,0,2.08,0.56,2.51,1.26c0.37,0.6,0.58,1.73,0.01,2.57 c-0.63,0.93-1.23,1.21-1.56,1.81c-0.13,0.24-0.18,0.4-0.18,1.18h-1.52C13.26,11.41,13.19,10.74,13.51,10.16z M12.95,13.95 c0-0.59,0.47-1.04,1.05-1.04c0.59,0,1.04,0.45,1.04,1.04c0,0.58-0.44,1.05-1.04,1.05C13.42,15,12.95,14.53,12.95,13.95z" />
+                </g>
+            </svg>
             {{ __('Quizzes') }}
         </inertia-link>
 
         <inertia-link :href="route('my_progress')"
-                      :class="[route().current() === 'my_progress' ? 'bg-secondary text-white' : 'text-white hover:bg-secondary hover:text-white']"
-                      class="group rounded-md py-3 px-4 flex items-center text-base font-semibold">
-            <svg :class="[route().current() === 'my_progress' ? 'text-white' : 'text-secondary']" class="group-hover:text-white ltr:mr-3 rtl:ml-3 flex-shrink-0 h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>
+            :class="[route().current() === 'my_progress' ? 'bg-secondary text-white' : 'text-white hover:bg-secondary hover:text-white']"
+            class="group rounded-md py-3 px-4 flex items-center text-base font-semibold">
+            <svg :class="[route().current() === 'my_progress' ? 'text-white' : 'text-secondary']"
+                class="group-hover:text-white ltr:mr-3 rtl:ml-3 flex-shrink-0 h-6 w-6" xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24" fill="currentColor">
+                <path d="M0 0h24v24H0V0z" fill="none" />
+                <path
+                    d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z" />
+            </svg>
             {{ __('My Progress') }}
+        </inertia-link>
+
+        <inertia-link :href="route('withdraw')"
+            :class="[route().current() === 'withdraw' ? 'bg-secondary text-white' : 'text-white hover:bg-secondary hover:text-white']"
+            class="group rounded-md py-3 px-4 flex items-center text-base font-semibold">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"
+                class="group-hover:text-white ltr:mr-3 rtl:ml-3 flex-shrink-0 h-6 w-6"
+                :class="[route().current() === 'withdraw' ? 'text-white' : 'text-secondary']" fill="currentColor">
+                <path
+                    d="M535 41c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l64 64c4.5 4.5 7 10.6 7 17s-2.5 12.5-7 17l-64 64c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l23-23L384 112c-13.3 0-24-10.7-24-24s10.7-24 24-24l174.1 0L535 41zM105 377l-23 23L256 400c13.3 0 24 10.7 24 24s-10.7 24-24 24L81.9 448l23 23c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0L7 441c-4.5-4.5-7-10.6-7-17s2.5-12.5 7-17l64-64c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9zM96 64H337.9c-3.7 7.2-5.9 15.3-5.9 24c0 28.7 23.3 52 52 52l117.4 0c-4 17 .6 35.5 13.8 48.8c20.3 20.3 53.2 20.3 73.5 0L608 169.5V384c0 35.3-28.7 64-64 64H302.1c3.7-7.2 5.9-15.3 5.9-24c0-28.7-23.3-52-52-52l-117.4 0c4-17-.6-35.5-13.8-48.8c-20.3-20.3-53.2-20.3-73.5 0L32 342.5V128c0-35.3 28.7-64 64-64zm64 64H96v64c35.3 0 64-28.7 64-64zM544 320c-35.3 0-64 28.7-64 64h64V320zM320 352a96 96 0 1 0 0-192 96 96 0 1 0 0 192z" />
+            </svg>
+            {{ __('Withdraw Money') }}
         </inertia-link>
     </nav>
 </template>
 <script>
-    export default {
-        name: "SideBarNav",
-        props: {
-            isMobile: Boolean,
-        }
+export default {
+    name: "SideBarNav",
+    props: {
+        isMobile: Boolean,
     }
+}
 </script>

@@ -34,11 +34,13 @@ class SubCategoryCrudController extends Controller
         return Inertia::render('Admin/SubCategories', [
             'categories' => Category::select(['name', 'id'])->get(),
             'types' => SubCategoryType::select(['name', 'id'])->get(),
-            'subCategories' => function () use($filters) {
-                return fractal(SubCategory::filter($filters)->with('category:id,name')
-                    ->with('subCategoryType:id,name')
-                    ->paginate(request()->perPage != null ? request()->perPage : 10),
-                    new SubCategoryTransformer())->toArray();
+            'subCategories' => function () use ($filters) {
+                return fractal(
+                    SubCategory::filter($filters)->with('category:id,name')
+                        ->with('subCategoryType:id,name')
+                        ->paginate(request()->perPage != null ? request()->perPage : 10),
+                    new SubCategoryTransformer()
+                )->toArray();
             },
         ]);
     }
@@ -55,8 +57,8 @@ class SubCategoryCrudController extends Controller
         return response()->json([
             'subCategories' => fractal(SubCategory::select(['id', 'name', 'category_id'])
                 ->with('category:id,name')
-                ->where('name', 'like', '%'.$query.'%')
-                ->orWhere('code', 'like', '%'.$query.'%')
+                ->where('name', 'like', '%' . $query . '%')
+                ->orWhere('code', 'like', '%' . $query . '%')
                 ->limit(20)
                 ->get(), new SubCategorySearchTransformer())
                 ->toArray()['data']
@@ -152,18 +154,21 @@ class SubCategoryCrudController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $subCategory = SubCategory::find($id);
+        $subCategory = SubCategory::find($id);
 
-            if(!$subCategory->canSecureDelete('practiceSets', 'quizzes')) {
+        if ($subCategory->slug === 'general') {
+            return redirect()->back()->with('errorMessage', 'General is default & can not be deleted!');
+        }
+        try {
+
+            if (!$subCategory->canSecureDelete('practiceSets', 'quizzes')) {
                 return redirect()->back()->with('errorMessage', 'Unable to Delete Sub Category . Remove all associations and Try again!');
             }
 
             $subCategory->sections()->detach();
 
             $subCategory->secureDelete('practiceSets', 'quizzes');
-        }
-        catch (\Illuminate\Database\QueryException $e){
+        } catch (\Illuminate\Database\QueryException $e) {
             return redirect()->route('sub-categories.index')
                 ->with('errorMessage', 'Unable to Delete Sub Category . Remove all associations and Try again!');
         }

@@ -31,10 +31,12 @@ class TopicCrudController extends Controller
     {
         return Inertia::render('Admin/Topics', [
             'skills' => Skill::select(['name', 'id'])->get(),
-            'topics' => function () use($filters) {
-                return fractal(Topic::filter($filters)
-                    ->paginate(request()->perPage != null ? request()->perPage : 10),
-                    new TopicTransformer())->toArray();
+            'topics' => function () use ($filters) {
+                return fractal(
+                    Topic::filter($filters)
+                        ->paginate(request()->perPage != null ? request()->perPage : 10),
+                    new TopicTransformer()
+                )->toArray();
             },
         ]);
     }
@@ -53,7 +55,7 @@ class TopicCrudController extends Controller
             'topics' => fractal(Topic::select(['id', 'name', 'skill_id'])
                 ->filter($filters)
                 ->with('skill:id,name')
-                ->where('name', 'like', '%'.$query.'%')->limit(20)
+                ->where('name', 'like', '%' . $query . '%')->limit(20)
                 ->get(), new TopicSearchTransformer())
                 ->toArray()['data']
         ]);
@@ -116,16 +118,20 @@ class TopicCrudController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $topic = Topic::find($id);
+        $topic = Topic::find($id);
 
-            if(!$topic->canSecureDelete('questions')) {
+        if ($topic->slug === 'general') {
+            return redirect()->back()->with('errorMessage', 'General is default & can not be deleted!');
+        }
+
+        try {
+
+            if (!$topic->canSecureDelete('questions')) {
                 return redirect()->back()->with('errorMessage', 'Unable to Delete Topic. Remove all associations and Try again!');
             }
 
             $topic->secureDelete('questions');
-        }
-        catch (\Illuminate\Database\QueryException $e){
+        } catch (\Illuminate\Database\QueryException $e) {
             return redirect()->back()->with('errorMessage', 'Unable to Delete Topic . Remove all associations and Try again!');
         }
         return redirect()->back()->with('successMessage', 'Topic was successfully deleted!');

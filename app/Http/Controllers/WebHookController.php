@@ -20,27 +20,27 @@ class WebHookController extends Controller
         // Verify signature
         $verified = $repository->verifyWebhook($request->getContent(), $request->header('X-Razorpay-Signature'));
 
-        if(!$verified) {
+        if (!$verified) {
             return response()->json(['success' => false], 400);
         }
 
         $payload = $request->get('payload');
 
         // If payment captured payment status as success
-        if($request->get('event') == 'payment.captured') {
+        if ($request->get('event') == 'payment.captured') {
             $payment = Payment::where('transaction_id', '=', $payload['payment']['entity']['id'])->first();
-            if($payment) {
+            if ($payment) {
                 $payment->status = 'success';
-                $payment->update;
+                $payment->save();
             }
         }
 
         // If payment failed mark payment status as failed
-        if($request->get('event') == 'payment.failed') {
+        if ($request->get('event') == 'payment.failed') {
             $payment = Payment::where('transaction_id', '=', $payload['payment']['entity']['id'])->first();
-            if($payment) {
+            if ($payment) {
                 $payment->status = 'failed';
-                $payment->update;
+                $payment->save();
             }
         }
 

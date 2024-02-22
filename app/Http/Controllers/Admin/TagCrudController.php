@@ -27,9 +27,11 @@ class TagCrudController extends Controller
     {
         return Inertia::render('Admin/Tags', [
             'tags' => function () use ($filters) {
-                return fractal(Tag::filter($filters)
-                    ->paginate(request()->perPage != null ? request()->perPage : 10),
-                    new TagTransformer())->toArray();
+                return fractal(
+                    Tag::filter($filters)
+                        ->paginate(request()->perPage != null ? request()->perPage : 10),
+                    new TagTransformer()
+                )->toArray();
             },
         ]);
     }
@@ -47,7 +49,7 @@ class TagCrudController extends Controller
         return response()->json([
             'tags' => Tag::select(['id', 'name'])
                 ->filter($filters)
-                ->where('name', 'like', '%'.$query.'%')
+                ->where('name', 'like', '%' . $query . '%')
                 ->limit(20)
                 ->get()
         ]);
@@ -100,14 +102,18 @@ class TagCrudController extends Controller
      */
     public function destroy($id)
     {
+        $tag = Tag::find($id);
+
+        if ($tag->slug === 'general') {
+            return redirect()->back()->with('errorMessage', 'General is default & can not be deleted!');
+        }
+
         try {
-            $tag = Tag::find($id);
             $tag->questions()->detach();
             $tag->lessons()->detach();
             $tag->videos()->detach();
             $tag->secureDelete();
-        }
-        catch (\Illuminate\Database\QueryException $e){
+        } catch (\Illuminate\Database\QueryException $e) {
             return redirect()->back()->with('errorMessage', 'Unable to Delete Tag . Remove all associations and Try again!');
         }
 

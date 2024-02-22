@@ -39,7 +39,7 @@ class QuizDashboardController extends Controller
             $query->whereIn('user_group_id', $userGroups);
         })->whereHas('quiz', function (Builder $query) use ($category) {
             $query->where('sub_category_id', '=', $category->id);
-        })->with(['quiz' => function($builder) {
+        })->with(['quiz' => function ($builder) {
             $builder->with(['subCategory:id,name', 'quizType:id,name']);
         }])->orderBy('end_date', 'asc')->active()->limit(4)->get();
 
@@ -81,7 +81,7 @@ class QuizDashboardController extends Controller
             $query->whereIn('user_group_id', $userGroups);
         })->whereHas('quiz', function (Builder $query) use ($category) {
             $query->where('sub_category_id', '=', $category->id);
-        })->with(['quiz' => function($builder) {
+        })->with(['quiz' => function ($builder) {
             $builder->with(['subCategory:id,name', 'quizType:id,name']);
         }])->orderBy('end_date', 'asc')->active()->paginate(10);
 
