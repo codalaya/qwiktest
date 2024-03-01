@@ -102,23 +102,7 @@
                                     <hr class="my-8 border-t border-gray-200">
                                     <div class="text-gray-600 text-sm mb-2" v-html="quiz.description"></div>
                                     <hr class="my-8 border-t border-gray-200">
-                                    <h4 class="text-gray-900 font-semibold mb-4">
-                                        {{ __('Quiz') }} {{ __('Instructions') }}
-                                    </h4>
-                                    <div class="prose text-gray-800 mb-2">
-                                        <ul>
-                                            <li v-for="instruction in instructions.quiz" v-html="instruction"></li>
-                                        </ul>
-                                    </div>
-                                    <hr class="my-8 border-t border-gray-200">
-                                    <h4 class="text-gray-900 font-semibold mb-4">
-                                        {{ __('Standard Instructions') }}
-                                    </h4>
-                                    <div class="prose text-gray-800 mb-2">
-                                        <ul>
-                                            <li v-for="instruction in instructions.standard" v-html="instruction"></li>
-                                        </ul>
-                                    </div>
+
                                 </div>
                                 <div class="py-4 lg:w-1/3 w-full md:pl-6">
                                     <!--Show timer if schedule not yet started-->

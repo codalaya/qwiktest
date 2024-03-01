@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Category;
 use App\Models\ExamSession;
 use App\Models\Payment;
+use App\Models\Plan;
 use App\Models\Question;
 use App\Models\Quiz;
 use App\Models\QuizSchedule;
@@ -27,6 +28,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
+use Laravel\Fortify\Contracts\LogoutResponse;
 use Spatie\LaravelSettings\Models\SettingsProperty;
 
 class TestCommand extends Command
@@ -55,11 +57,22 @@ class TestCommand extends Command
         parent::__construct();
     }
 
-
     public function handle()
     {
-        $user = User::firstWhere('email', 'ambika@gmail.com');
-        dd($user->toArray());
+        $d = DB::table('quiz_session_questions')->first();
+        // $q = QuizSession::find(143);
+        // dd($q->results->pass_or_fail);
+
+        $d =   QuizSession::first();
+        dd($d->toArray());
+    }
+
+
+    public function something()
+    {
+
+        $dp  = User::where('email', 'ritik@gmail.com')->first();
+        dd($dp->toArray());
         // dd($user->subscriptions()->latest()->first()->remained_game_play);
         // dd(QuizSession::where('code', '24e1f7f8-14e1-45a8-9ea9-59fd3f714fc3')->first());
         // $usergroups = UserGroup::all();

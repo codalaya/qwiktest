@@ -244,8 +244,8 @@
                         </tr>
                         <tr class="bg-emerald-200">
                             <td class="border border-emerald-500 px-4 py-2 text-emerald-600 text-sm">{{ __('Not Answered')
-                            }}</td>
-                            <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-medium text-sm text-right">
+                                                            }}</td>
+                                                        <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-medium text-sm text-right">
                                 {{ notAnsweredQuestions }}
                             </td>
                         </tr>
@@ -259,24 +259,24 @@
                         <tr>
                             <td class="border border-emerald-500 px-4 py-2 text-emerald-600 text-sm">
                                 {{ __('Marked for Review') }}</td>
-                            <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-medium text-sm text-right">
+                                                            <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-medium text-sm text-right">
                                 {{ markForReviewQuestions }}
                             </td>
                         </tr>
                         <tr>
                             <td class="border border-emerald-500 px-4 py-2 text-emerald-600 text-sm">
                                 {{ __('Answered & Marked for Review') }}
-                            </td>
+                                                            </td>
                             <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-medium text-sm text-right">
                                 {{ answeredMarkForReviewQuestions }}
-                            </td>
+                                                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <template #footer>
                 <Button label="No" icon="pi pi-times" @click="closeConfirmation" class="p-button-text" />
-                <Button label="Yes" icon="pi pi-check" @click="finishTest" class="p-button-text" autofocus />
+                                <Button label="Yes" icon="pi pi-check" @click="finishTest" class="p-button-text" autofocus />
             </template>
         </Dialog>
     </quiz-layout>
@@ -405,7 +405,7 @@ export default {
                     _this.SET_CURRENT_SCORE(data.current_score);
                     _this.$toast.add({
                         severity: 'info',
-                        summary: `+ ${data.current_score} Points gained.`,
+                        summary: `Total ${data.current_score} Points gained.`,
                         life: 3000
                     })
                 })
@@ -437,6 +437,8 @@ export default {
             this.questions[this.current_question].time_remained = this.current_question_time_remained
             this.questions[this.current_question].user_answer = value;
             this.questions[this.current_question].status = 'touched';
+
+            this.nextQuestion();
         },
         prevQuestion() {
             if (this.current_question !== 0) {

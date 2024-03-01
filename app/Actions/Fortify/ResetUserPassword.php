@@ -19,10 +19,6 @@ class ResetUserPassword implements ResetsUserPasswords
      */
     public function reset($user, array $input)
     {
-        if(config('qwiktest.demo_mode')) {
-            return redirect()->back()->with('errorMessage', 'Demo Mode! These settings can\'t be changed.');
-        }
-
         Validator::make($input, [
             'password' => $this->passwordRules(),
         ])->validate();

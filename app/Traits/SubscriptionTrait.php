@@ -17,28 +17,31 @@ trait SubscriptionTrait
      */
     public function hasActiveSubscription($category, $feature = null)
     {
+        // enabling subscription for all users.
+        return true;
+
         // fetch the active category subscription of a user
-        $subscription = $this->subscriptions()
-            ->with('plan', function ($query) {
-                $query->with('features');
-            })
-            ->where('category_id', '=', $category)
-            ->where('ends_at', '>', now()->toDateTimeString())
-            // ->where('remained_game_play', '>', 0)
-            ->where('status', '=', 'active')
-            ->first();
+        // $subscription = $this->subscriptions()
+        //     ->with('plan', function ($query) {
+        //         $query->with('features');
+        //     })
+        //     ->where('category_id', '=', $category)
+        //     ->where('ends_at', '>', now()->toDateTimeString())
+        //     // ->where('remained_game_play', '>', 0)
+        //     ->where('status', '=', 'active')
+        //     ->first();
 
-        if (!$subscription) {
-            return false;
-        }
+        // if (!$subscription) {
+        //     return false;
+        // }
 
-        // feature check
-        if ($feature) {
-            $features = $subscription->plan->features->pluck('code')->toArray();
-            return in_array($feature, $features);
-        } else {
-            return true;
-        }
+        // // feature check
+        // if ($feature) {
+        //     $features = $subscription->plan->features->pluck('code')->toArray();
+        //     return in_array($feature, $features);
+        // } else {
+        //     return true;
+        // }
     }
 
     /**

@@ -28,9 +28,10 @@
                     <section-header :title="'Live Quizzes'">
                         <template #icon>
                             <span class="flex absolute h-3 w-3 top-4 ltr:-right-4 rtl:-left-4">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+                                <span
+                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
                                 <span class="relative inline-flex rounded-full h-3 w-3 bg-secondary"></span>
-                              </span>
+                            </span>
                         </template>
                         <template #action>
                             <inertia-link :href="route('live_quizzes')">
@@ -42,14 +43,23 @@
                         <template v-for="(quiz, index) in quizSchedules">
                             <quiz-schedule-card :quiz="quiz" :subscription="subscription">
                                 <template #action>
-                                    <inertia-link v-if="quiz.paid && (!subscription && quiz.redeem)" :href="route('quiz_schedule_instructions', {quiz: quiz.slug, schedule: quiz.code})">
-                                        <span class="qt-btn qt-btn-sm qt-btn-primary">{{ __('Redeem with') }} {{ quiz.redeem }}</span>
+                                    <inertia-link v-if="quiz.paid && (quiz.redeem)"
+                                        :href="route('quiz_schedule_instructions', { quiz: quiz.slug, schedule: quiz.code })">
+                                        <span class="qt-btn qt-btn-sm qt-btn-primary">{{ __('Redeem with') }} {{ quiz.redeem
+                                        }}</span>
                                     </inertia-link>
-                                    <button @click="showSubscribeModal" v-else-if="quiz.paid && !subscription" class="qt-btn qt-btn-sm bg-gray-300 inline-flex items-center">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+                                    <!-- <button @click="showSubscribeModal" v-else-if="quiz.paid && !subscription"
+                                        class="qt-btn qt-btn-sm bg-gray-300 inline-flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z">
+                                            </path>
+                                        </svg>
                                         <span>{{ __('Unlock') }}</span>
-                                    </button>
-                                    <inertia-link v-else :href="route('quiz_schedule_instructions', {quiz: quiz.slug, schedule: quiz.code})">
+                                    </button> -->
+                                    <inertia-link v-else
+                                        :href="route('quiz_schedule_instructions', { quiz: quiz.slug, schedule: quiz.code })">
                                         <span class="qt-btn qt-btn-sm qt-btn-primary">{{ __('Start Quiz') }}</span>
                                     </inertia-link>
                                 </template>
@@ -66,99 +76,99 @@
 </template>
 
 <script>
-    import AppLayout from '@/Layouts/AppLayout'
-    import QuizCard from "@/Components/Cards/QuizCard";
-    import QuizScheduleCard from "@/Components/Cards/QuizScheduleCard";
-    import EmptyStudentCard from "@/Components/Cards/EmptyStudentCard";
-    import SectionHeader from "@/Components/SectionHeader";
-    import QuizTypeCard from "@/Components/Cards/QuizTypeCard";
-    import { Swiper, SwiperSlide } from 'vue-awesome-swiper';
+import AppLayout from '@/Layouts/AppLayout'
+import QuizCard from "@/Components/Cards/QuizCard";
+import QuizScheduleCard from "@/Components/Cards/QuizScheduleCard";
+import EmptyStudentCard from "@/Components/Cards/EmptyStudentCard";
+import SectionHeader from "@/Components/SectionHeader";
+import QuizTypeCard from "@/Components/Cards/QuizTypeCard";
+import { Swiper, SwiperSlide } from 'vue-awesome-swiper';
 
-    export default {
-        components: {
-            QuizScheduleCard,
-            EmptyStudentCard,
-            AppLayout,
-            QuizCard,
-            SectionHeader,
-            QuizTypeCard,
-            Swiper,
-            SwiperSlide
-        },
-        props: {
-            quizTypes: Array,
-            quizSchedules: Array,
-            subscription: {
-                type: Boolean,
-                default: false,
-            }
-        },
+export default {
+    components: {
+        QuizScheduleCard,
+        EmptyStudentCard,
+        AppLayout,
+        QuizCard,
+        SectionHeader,
+        QuizTypeCard,
+        Swiper,
+        SwiperSlide
+    },
+    props: {
+        quizTypes: Array,
+        quizSchedules: Array,
+        subscription: {
+            type: Boolean,
+            default: true,
+        }
+    },
 
-        data() {
-            return {
-                swiperOptions: {
-                    slidesPerView: 4,
-                    spaceBetween: 10,
-                    breakpoints: {
-                        1024: {
-                            slidesPerView: 4,
-                            spaceBetween: 10
-                        },
-                        768: {
-                            slidesPerView: 3,
-                            spaceBetween: 10
-                        },
-                        640: {
-                            slidesPerView: 2,
-                            spaceBetween: 5
-                        },
-                        320: {
-                            slidesPerView: 2,
-                            spaceBetween: 5
-                        }
+    data() {
+        return {
+            swiperOptions: {
+                slidesPerView: 4,
+                spaceBetween: 10,
+                breakpoints: {
+                    1024: {
+                        slidesPerView: 4,
+                        spaceBetween: 10
+                    },
+                    768: {
+                        slidesPerView: 3,
+                        spaceBetween: 10
+                    },
+                    640: {
+                        slidesPerView: 2,
+                        spaceBetween: 5
+                    },
+                    320: {
+                        slidesPerView: 2,
+                        spaceBetween: 5
                     }
                 }
             }
+        }
+    },
+    methods: {
+        next() {
+            this.swiper.slideNext();
         },
-        methods: {
-            next() {
-                this.swiper.slideNext();
-            },
-            prev() {
-                this.swiper.slidePrev();
-            },
-            showSubscribeModal() {
-                this.$swal({
-                    title: '<strong>'+this.__('Subscribe to Access')+'</strong>',
-                    icon: 'warning',
-                    html: this.__('You don\'t have an active plan to see this content. Please subscribe.'),
-                    showCloseButton: true,
-                    showCancelButton: false,
-                    focusConfirm: true,
-                    confirmButtonText: this.__('See Pricing'),
-                    confirmButtonAriaLabel: this.__('See Pricing'),
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        this.goToPricing();
-                    }
-                });
-            },
-            goToPricing() {
-                window.location.assign(route('pricing'));
-            }
+        prev() {
+            this.swiper.slidePrev();
         },
-        metaInfo() {
-            return {
-                title: this.title
-            }
+        showSubscribeModal() {
+            this.$swal({
+                title: '<strong>' + this.__('Subscribe to Access') + '</strong>',
+                icon: 'warning',
+                html: this.__('You don\'t have an active plan to see this content. Please subscribe.'),
+                showCloseButton: true,
+                showCancelButton: false,
+                focusConfirm: true,
+                confirmButtonText: this.__('See Pricing'),
+                confirmButtonAriaLabel: this.__('See Pricing'),
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.goToPricing();
+                }
+            });
         },
-        computed: {
-            title() {
-                return this.__('Quiz Dashboard')+' - ' + this.$page.props.general.app_name;
-            },
-            swiper() {
-                return this.$refs.mySwiper.$swiper;
-            }
+        goToPricing() {
+            window.location.assign(route('pricing'));
+        }
+    },
+    metaInfo() {
+        return {
+            title: this.title
+        }
+    },
+    computed: {
+        title() {
+            return this.__('Quiz Dashboard') + ' - ' + this.$page.props.general.app_name;
         },
-    }
+        swiper() {
+            return this.$refs.mySwiper.$swiper;
+        }
+    },
+}
 </script>

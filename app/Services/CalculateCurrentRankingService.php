@@ -31,32 +31,33 @@ class CalculateCurrentRankingService
         $leaderboard = DB::table('quiz_session_questions')
             ->where('quiz_id', $session->quiz_id)
             ->groupBy('user_id')
-            ->selectRaw('sum(marks_earned) as total_marks, user_id')
+            ->selectRaw('sum(marks_earned) as total_marks, user_id, quiz_session_id')
             ->orderBy('total_marks')
-            ->take(10)
+            ->take(20)
             ->get();
 
+        $quizSessions = QuizSession::whereIn('id', $leaderboard->pluck('quiz_sesson_id'))->get();
         $users = User::whereIn('id', $leaderboard->pluck('user_id'))->get();
 
         $prizeSettins = resolve(QuizPrizeSettings::class);
 
-        if ($users->count() > 0) {
-            $user = $users->first(fn ($item) => $item->id === $leaderboard[0]->user_id);
-            $user->deposit($prizeSettins->rankOne);
+        for ($i = 0; $i < 10; $i++) {
+            if ($users->count() > $i) {
+                $user = $users->first(fn ($item) => $item->id === $leaderboard[$i]->user_id);
+                $session = $quizSessions->first(fn ($item) => $item->user_id === $leaderboard[$i]->user_id);
+                if ($session->results['pass_or_fail'] === 'Passed') {
+                    $field = 'rank' . ($i + 1);
+                    $user->deposit($prizeSettins->$field);
+                }
+            }
         }
 
-        if ($users->count() > 1) {
-            $user = $users->first(fn ($item) => $item->id === $leaderboard[1]->user_id);
-            $user->deposit($prizeSettins->rankTwo);
-        }
-        if ($users->count() > 2) {
-            $user = $users->first(fn ($item) => $item->id === $leaderboard[2]->user_id);
-            $user->deposit($prizeSettins->rankThree);
-        }
-
-        for ($i = 3; $i < $users->count(); $i++) {
+        for ($i = 10; $i < $users->count(); $i++) {
             $user = $users->first(fn ($item) => $item->id === $leaderboard[$i]->user_id);
-            $users[$i]->deposit($prizeSettins->above10Rank);
+            $session = $quizSessions->first(fn ($item) => $item->user_id === $leaderboard[$i]->user_id);
+            if ($session->results['pass_or_fail'] === 'Passed') {
+                $user->deposit($prizeSettins->rankUpto20);
+            }
         }
     }
 }

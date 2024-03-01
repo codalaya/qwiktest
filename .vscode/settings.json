@@ -1,3 +1,4 @@
 {
-    "editor.fontFamily": "'hasklig'"
+    "editor.fontFamily": "'hasklig'",
+    "php.version": "8.0"
 }

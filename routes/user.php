@@ -2,6 +2,7 @@
 
 
 
+use App\Http\Controllers\AddMoneyController;
 use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\QuizDashboardController;
 use App\Http\Controllers\User\PracticeDashboardController;
@@ -58,8 +59,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     | Payment & Checkout Routes
     |--------------------------------------------------------------------------
     */
-    Route::get('/checkout/{plan}', [CheckoutController::class, 'checkout'])->name('checkout');
-    Route::post('/checkout/{plan}', [CheckoutController::class, 'processCheckout'])->name('process_checkout');
+    // Route::get('/checkout/{plan}', [CheckoutController::class, 'checkout'])->name('checkout');
+    // Route::post('/checkout/{plan}', [CheckoutController::class, 'processCheckout'])->name('process_checkout');
     Route::get('/payment-cancelled', [CheckoutController::class, 'paymentCancelled'])->name('payment_cancelled');
     Route::get('/payment-pending', [CheckoutController::class, 'paymentPending'])->name('payment_pending');
     Route::get('/payment-success', [CheckoutController::class, 'paymentSuccess'])->name('payment_success');
@@ -76,7 +77,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::post('/bank-details', [WithdrawController::class, 'updateDetails']);
     Route::get('/withdraw', [WithdrawController::class, 'showWithdrawlPage'])->name('withdraw');
     Route::post('/withdraw', [WithdrawController::class, 'storeWithdraw']);
-
+    Route::get('/add-money', [AddMoneyController::class, 'showPage'])->name('add-money');
+    Route::post('/generate-order', [AddMoneyController::class, 'generateOrder']);
+    Route::post('/callbacks/add-money-razorpay', [AddMoneyController::class, 'addMoneyCallback'])->name('add-money-callback');
     /*
     |--------------------------------------------------------------------------
     | Practice Video Routes

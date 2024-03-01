@@ -38,8 +38,8 @@
                                         <button @click="editForm = true; currentId = props.row.id;" class="action-item">{{
                                             __('Edit')
                                         }}</button>
-                                        <button @click="deleteRequest(props.row.id)" class="action-item">{{ __('Delete')
-                                        }}</button>
+                                        <!-- <button @click="deleteRequest(props.row.id)" class="action-item">{{ __('Delete')
+                                        }}</button> -->
                                     </template>
                                 </actions-dropdown>
                             </div>

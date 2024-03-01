@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\QuizSchedule;
 use App\Models\QuizType;
 use App\Models\SubCategory;
+use App\Models\UserGroup;
 use App\Settings\LocalizationSettings;
 use App\Transformers\Platform\QuizCardTransformer;
 use App\Transformers\Platform\QuizScheduleCardTransformer;
@@ -31,7 +32,8 @@ class QuizDashboardController extends Controller
      */
     public function quiz()
     {
-        $userGroups = auth()->user()->userGroups()->pluck('id');
+        $userGroups = auth()->user() ?  auth()->user()->userGroups()->pluck('id') : UserGroup::where('slug', 'general')->pluck('id');
+
         $category = SubCategory::find(Cookie::get('category_id'));
 
         // Fetch quizzes scheduled for current user via user groups
@@ -41,7 +43,7 @@ class QuizDashboardController extends Controller
             $query->where('sub_category_id', '=', $category->id);
         })->with(['quiz' => function ($builder) {
             $builder->with(['subCategory:id,name', 'quizType:id,name']);
-        }])->orderBy('end_date', 'asc')->active()->limit(4)->get();
+        }])->orderBy('end_date', 'desc')->orderBy('end_time', 'desc')->active()->limit(4)->get();
 
         // Fetch public quizzes by quiz type
         $quizTypes = QuizType::active()->orderBy('name')->get();
@@ -49,7 +51,7 @@ class QuizDashboardController extends Controller
         return Inertia::render('User/QuizDashboard', [
             'quizSchedules' => fractal($schedules, new QuizScheduleCardTransformer())->toArray()['data'],
             'quizTypes' => fractal($quizTypes, new QuizTypeTransformer())->toArray()['data'],
-            'subscription' => request()->user()->hasActiveSubscription($category->id, 'quizzes')
+            // 'subscription' => request()->user()->hasActiveSubscription($category->id, 'quizzes')
         ]);
     }
 

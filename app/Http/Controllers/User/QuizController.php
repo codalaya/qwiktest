@@ -56,6 +56,9 @@ class QuizController extends Controller
             'quiz' => fractal($quiz, new QuizDetailTransformer())->toArray()['data'],
             'instructions' => $this->repository->getInstructions($quiz),
             'subscription' => request()->user()->hasActiveSubscription($quiz->sub_category_id, 'quizzes'),
+            'errorMessage' => (auth()->user()->balance < $quiz->points_required)
+                ? __('insufficient_points') . ' ' . str_replace('--', auth()->user()->balance . ' XP', __('wallet_balance_text')) . ' ' . str_replace('--', $quiz->points_required . ' XP', __('required_points_are'))
+                : '',
         ]);
     }
 
@@ -67,8 +70,6 @@ class QuizController extends Controller
      */
     public function initQuiz(Quiz $quiz)
     {
-        $subscription = request()->user()->hasActiveSubscription($quiz->sub_category_id, 'quizzes');
-
         // load completed quiz sessions
         $quiz->loadCount(['sessions' => function ($query) {
             $query->where('user_id', auth()->user()->id)->where('status', 'completed');
@@ -77,33 +78,27 @@ class QuizController extends Controller
         // check if any uncompleted sessions
         if ($quiz->sessions()->where('user_id', auth()->user()->id)->where('status', '=', 'started')->count() > 0) {
             $session = $this->repository->getSession($quiz);
-        } else {
             // check restricted attempts
             if ($quiz->settings->get('restrict_attempts')) {
                 if ($quiz->sessions_count >= $quiz->settings->get('no_of_attempts')) {
                     return redirect()->back()->with('errorMessage', __('max_attempts_text'));
                 }
             }
-
-            if ($quiz->is_paid && !$subscription) {
-                // check redeem eligibility
-                if ($quiz->can_redeem) {
-                    if (auth()->user()->balance < $quiz->points_required) {
-                        $msg = __('insufficient_points') . ' ' . str_replace('--', auth()->user()->balance . ' XP', __('wallet_balance_text')) . ' ' . str_replace('--', $quiz->points_required . ' XP', __('required_points_are'));
-                        return redirect()->back()->with('errorMessage', $msg);
-                    }
-                } else {
-                    return redirect()->back()->with('errorMessage', __('You don\'t have an active plan to access this content. Please subscribe.'));
+        } else {
+            // check redeem eligibility
+            if ($quiz->can_redeem) {
+                if (auth()->user()->balance < $quiz->points_required) {
+                    $msg = __('insufficient_points') . ' ' . str_replace('--', auth()->user()->balance . ' XP', __('wallet_balance_text')) . ' ' . str_replace('--', $quiz->points_required . ' XP', __('required_points_are'));
+                    return redirect()->back()->with('errorMessage', $msg);
                 }
             }
+
 
             $session = $this->repository->createSession($quiz, $this->questionRepository);
 
             // deduct wallet points in case of not having a subscription for a paid quiz
             if ($session) {
-                if ($subscription) {
-                    auth()->user()->subscriptions()->latest()->first()->decrement('remained_game_play');
-                } elseif ($quiz->is_paid && !$subscription && $quiz->can_redeem) {
+                if ($quiz->is_paid && $quiz->can_redeem) {
                     auth()->user()->withdraw($quiz->points_required, [
                         'session' => $session->code,
                         'description' => 'Attempt of Quiz ' . $quiz->title,
@@ -207,37 +202,36 @@ class QuizController extends Controller
             $marks = $quiz->settings->get('auto_grading', true) ? $question->default_marks : $quiz->settings->get('correct_marks');
             if ($isCorrect) {
                 $marksEarned = $request->time_remained ?? 0;
-            } else {
-                if ($quiz->settings->get('enable_negative_marking', false)) {
-                    if ($quiz->settings->get('negative_marking_type', 'fixed') == 'fixed') {
-                        $marksDeducted = $quiz->settings->get('negative_marks', 0);
-                    } else {
-                        $marksDeducted = $quiz->settings->get('negative_marks', 0) != 0 ? round(($marks * $quiz->settings->get('negative_marks', 0))  / 100, 2) : 0;
-                    }
-                }
             }
+            // else {
+            //     if ($quiz->settings->get('enable_negative_marking', false)) {
+            //         if ($quiz->settings->get('negative_marking_type', 'fixed') == 'fixed') {
+            //             $marksDeducted = $quiz->settings->get('negative_marks', 0);
+            //         } else {
+            //             $marksDeducted = $quiz->settings->get('negative_marks', 0) != 0 ? round(($marks * $quiz->settings->get('negative_marks', 0))  / 100, 2) : 0;
+            //         }
+            //     }
+            // }
         }
         /*Insert or Update Session Question*/
-        if (!DB::table('quiz_session_questions')->where('question_id', $question->id)->where('quiz_session_id', $session->id)->exists()) {
-            DB::table('quiz_session_questions')->upsert(
-                [
-                    'question_id' => $question->id,
-                    'original_question' => formatQuestionProperty($question->question, $question->questionType->code),
-                    'quiz_session_id' => $session->id,
-                    'quiz_id' => $session->quiz_id,
-                    'user_id' => auth()->user()->id,
-                    'user_answer' => serialize($request->user_answer),
-                    'time_taken' => $request->time_taken,
-                    'is_correct' => $isCorrect,
-                    'status' => $request->status,
-                    'marks_earned' => $marksEarned,
-                    'marks_deducted' => $marksDeducted,
-                    'created_at' => now(),
-                ],
-                ['question_id', 'quiz_session_id'],
-                ['user_answer', 'time_taken', 'is_correct', 'status', 'marks_earned', 'marks_deducted', 'user_id', 'quiz_id']
-            );
-        }
+        DB::table('quiz_session_questions')->upsert(
+            [
+                'question_id' => $question->id,
+                'original_question' => formatQuestionProperty($question->question, $question->questionType->code),
+                'quiz_session_id' => $session->id,
+                'quiz_id' => $session->quiz_id,
+                'user_id' => auth()->user()->id,
+                'user_answer' => serialize($request->user_answer),
+                'time_taken' => $request->time_taken,
+                'is_correct' => $isCorrect,
+                'status' => $request->status,
+                'marks_earned' => $marksEarned,
+                'marks_deducted' => $marksDeducted,
+                'created_at' => now(),
+            ],
+            ['question_id', 'quiz_session_id'],
+            ['user_answer', 'time_taken', 'is_correct', 'status', 'marks_earned', 'marks_deducted', 'user_id', 'quiz_id']
+        );
 
         /*Update Session */
         $session->current_question = $request->current_question;
